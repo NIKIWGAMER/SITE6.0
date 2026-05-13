@@ -1,0 +1,486 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pc-builder">
+    <h2 class="mb-2" style="color:#eef3ff; font-weight: 700;">
+        <i class="bi bi-cpu-fill me-2" style="color: #8bb5ff;"></i>Сборка ПК
+    </h2>
+    <p style="color:#8895c9; margin-bottom:25px;">Выберите компоненты — проверим совместимость и посчитаем стоимость.</p>
+
+    <div class="row">
+        <!-- Левая колонка - выбор компонентов -->
+        <div class="col-lg-8">
+            <div class="component-selector" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                
+                <!-- Имя сборки -->
+                <div class="mb-4">
+                    <label style="color: #eef3ff; font-weight: 600; margin-bottom: 8px;">
+                        <i class="bi bi-tag me-2"></i>Название сборки
+                    </label>
+                    <input type="text" id="build-name" class="form-control" 
+                           placeholder="Моя сборка №1" value="Моя сборка №1"
+                           style="background: var(--bg-input); border: 1px solid var(--border-hover); color: #fff; border-radius: 10px;">
+                </div>
+
+                <!-- Компоненты (как раньше) -->
+                <div class="component-group mb-4 p-3" style="background: rgba(91,141,239,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-cpu fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Процессор</h5>
+                        <span class="badge bg-danger ms-auto" id="cpu-warning" style="display:none;">⚠️</span>
+                        <span class="badge bg-success ms-auto" id="cpu-ok" style="display:none;">✓</span>
+                    </div>
+                    <select class="form-control component-select" id="cpu-select" data-type="cpu" onchange="updateBuild()">
+                        <option value="">— Выберите процессор —</option>
+                        {% for cpu in cpus %}
+                        <option value="{{ cpu.id }}" data-socket="{{ cpu.socket }}" data-price="{{ cpu.price }}" data-name="{{ cpu.name }}" data-image="{{ cpu.image_url }}">
+                            {{ cpu.name }} — {{ "%.0f"|format(cpu.price) }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="component-group mb-4 p-3" style="background: rgba(46,204,113,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: var(--success); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-motherboard fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Материнская плата</h5>
+                        <span class="badge bg-danger ms-auto" id="mb-warning" style="display:none;">⚠️</span>
+                        <span class="badge bg-success ms-auto" id="mb-ok" style="display:none;">✓</span>
+                    </div>
+                    <select class="form-control component-select" id="mb-select" data-type="motherboard" onchange="updateBuild()">
+                        <option value="">— Выберите мат. плату —</option>
+                        {% for mb in motherboards %}
+                        <option value="{{ mb.id }}" data-socket="{{ mb.socket }}" data-form="{{ mb.form_factor }}" data-ram="{{ mb.ram_type }}" data-price="{{ mb.price }}" data-name="{{ mb.name }}" data-image="{{ mb.image_url }}">
+                            {{ mb.name }} — {{ "%.0f"|format(mb.price) }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="component-group mb-4 p-3" style="background: rgba(255,77,109,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: var(--danger); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-gpu-card fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Видеокарта</h5>
+                    </div>
+                    <select class="form-control component-select" id="gpu-select" data-type="gpu" onchange="updateBuild()">
+                        <option value="">— Выберите видеокарту —</option>
+                        {% for gpu in gpus %}
+                        <option value="{{ gpu.id }}" data-price="{{ gpu.price }}" data-length="{{ gpu.gpu_length_max or 0 }}" data-name="{{ gpu.name }}" data-image="{{ gpu.image_url }}">
+                            {{ gpu.name }} — {{ "%.0f"|format(gpu.price) }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="component-group mb-4 p-3" style="background: rgba(243,156,18,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: var(--warning); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-memory fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Оперативная память</h5>
+                        <span class="badge bg-danger ms-auto" id="ram-warning" style="display:none;">⚠️</span>
+                        <span class="badge bg-success ms-auto" id="ram-ok" style="display:none;">✓</span>
+                    </div>
+                    <select class="form-control component-select" id="ram-select" data-type="ram" onchange="updateBuild()">
+                        <option value="">— Выберите ОЗУ —</option>
+                        {% for ram in rams %}
+                        <option value="{{ ram.id }}" data-ram="{{ ram.ram_type }}" data-price="{{ ram.price }}" data-name="{{ ram.name }}" data-image="{{ ram.image_url }}">
+                            {{ ram.name }} — {{ "%.0f"|format(ram.price) }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="component-group mb-4 p-3" style="background: rgba(142,68,173,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: #8e44ad; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-pc-display fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Корпус</h5>
+                    </div>
+                    <select class="form-control component-select" id="case-select" data-type="case" onchange="updateBuild()">
+                        <option value="">— Выберите корпус —</option>
+                        {% for case in cases %}
+                        <option value="{{ case.id }}" data-form="{{ case.form_factor }}" data-gpu-length="{{ case.gpu_length_max or 400 }}" data-price="{{ case.price }}" data-name="{{ case.name }}" data-image="{{ case.image_url }}">
+                            {{ case.name }} — {{ "%.0f"|format(case.price) }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="component-group mb-4 p-3" style="background: rgba(52,152,219,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: #3498db; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-lightning-charge fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Блок питания</h5>
+                    </div>
+                    <select class="form-control component-select" id="psu-select" data-type="psu" onchange="updateBuild()">
+                        <option value="">— Выберите БП —</option>
+                        {% for psu in psus %}
+                        <option value="{{ psu.id }}" data-price="{{ psu.price }}" data-name="{{ psu.name }}" data-image="{{ psu.image_url }}">
+                            {{ psu.name }} — {{ "%.0f"|format(psu.price) }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-primary flex-fill" onclick="addToCartBuild()" 
+                            style="background: var(--accent-gradient); border: none; padding: 14px; font-weight: 600; border-radius: 12px;">
+                        <i class="bi bi-cart-plus me-2"></i>Добавить сборку в корзину
+                    </button>
+                    <button class="btn btn-outline-light" onclick="resetBuild()" style="border-radius: 12px; padding: 14px 20px;">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка - сводка -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 20px;">
+                <!-- Сводка сборки -->
+                <div class="build-summary mb-4" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                    <h5 style="color: #eef3ff; margin-bottom: 15px;">
+                        <i class="bi bi-clipboard-check me-2"></i>Комплектация
+                    </h5>
+                    <div id="build-summary-list">
+                        <p style="color: #8895c9; text-align: center;"><i class="bi bi-inbox"></i> Выберите компоненты</p>
+                    </div>
+                    <hr style="border-color: var(--border);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span style="color: #eef3ff; font-size: 1.1rem;">Итого:</span>
+                        <span class="fw-bold" id="total-price" style="color: #8bb5ff; font-size: 1.5rem;">0 ₽</span>
+                    </div>
+                </div>
+
+                <!-- Совместимость -->
+                <div class="compatibility-check" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                    <h5 style="color: #eef3ff; margin-bottom: 15px;">
+                        <i class="bi bi-shield-check me-2"></i>Совместимость
+                    </h5>
+                    <div id="compatibility-results">
+                        <p style="color: #8895c9;">Выберите компоненты для проверки</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список добавленных сборок -->
+    <div class="mt-5">
+        <h4 style="color: #eef3ff; margin-bottom: 20px;">
+            <i class="bi bi-collection me-2"></i>Мои сборки
+        </h4>
+        <div id="saved-builds" class="row g-3">
+            <p style="color: #8895c9;" id="no-builds-msg">
+                <i class="bi bi-info-circle me-2"></i>Добавленные сборки появятся здесь
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.component-group:hover {
+    background: rgba(91,141,239,0.1) !important;
+    transition: all 0.3s ease;
+}
+.component-select {
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-hover) !important;
+    color: #fff !important;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+.build-card-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-hover);
+    border-radius: 12px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+.build-card-item:hover {
+    border-color: #5b8def;
+    transform: translateY(-2px);
+}
+</style>
+
+<script>
+    // При загрузке страницы - проверяем, залогинен ли пользователь
+// Если нет - сбрасываем сборки
+{% if not current_user.is_authenticated %}
+localStorage.removeItem('pcBuilds');
+{% endif %}
+
+let savedBuilds = JSON.parse(localStorage.getItem('pcBuilds') || '[]');
+
+function updateBuild() {
+    const selects = document.querySelectorAll('.component-select');
+    let totalPrice = 0;
+    let summaryHTML = '';
+    const componentTypes = {
+        cpu: 'Процессор', motherboard: 'Мат. плата', gpu: 'Видеокарта',
+        ram: 'ОЗУ', case: 'Корпус', psu: 'Блок питания'
+    };
+    
+    selects.forEach(select => {
+        if (select.value) {
+            const option = select.selectedOptions[0];
+            const type = select.dataset.type;
+            const price = parseFloat(option.dataset.price);
+            const name = option.dataset.name;
+            totalPrice += price;
+            
+            summaryHTML += `
+                <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 0.85rem;">
+                    <span style="color: #8895c9;">${componentTypes[type]}</span>
+                    <span style="color: #eef3ff;">${name.substring(0, 20)}...</span>
+                    <span style="color: #8bb5ff;">${price.toLocaleString()} ₽</span>
+                </div>
+            `;
+        }
+    });
+    
+    document.getElementById('build-summary-list').innerHTML = summaryHTML || '<p style="color: #8895c9; text-align: center;"><i class="bi bi-inbox"></i> Выберите компоненты</p>';
+    document.getElementById('total-price').textContent = totalPrice.toLocaleString() + ' ₽';
+    
+    checkCompatibility();
+}
+
+function checkCompatibility() {
+    const issues = [];
+    const cpuSelect = document.getElementById('cpu-select');
+    const mbSelect = document.getElementById('mb-select');
+    const ramSelect = document.getElementById('ram-select');
+    const caseSelect = document.getElementById('case-select');
+    const gpuSelect = document.getElementById('gpu-select');
+    
+    ['cpu', 'mb', 'ram'].forEach(t => {
+        const warn = document.getElementById(t + '-warning');
+        const ok = document.getElementById(t + '-ok');
+        if (warn) warn.style.display = 'none';
+        if (ok) ok.style.display = 'none';
+    });
+    
+    if (cpuSelect?.value && mbSelect?.value) {
+        const cpuSocket = cpuSelect.selectedOptions[0].dataset.socket;
+        const mbSocket = mbSelect.selectedOptions[0].dataset.socket;
+        
+        if (cpuSocket === mbSocket) {
+            document.getElementById('cpu-ok').style.display = 'block';
+            document.getElementById('mb-ok').style.display = 'block';
+            issues.push({type: 'success', text: `✅ Сокет ${cpuSocket} совместим`});
+        } else {
+            document.getElementById('cpu-warning').style.display = 'block';
+            document.getElementById('mb-warning').style.display = 'block';
+            issues.push({type: 'danger', text: `❌ Процессор (${cpuSocket}) не подходит (плата: ${mbSocket})`});
+        }
+    }
+    
+    if (mbSelect?.value && ramSelect?.value) {
+        const mbRam = mbSelect.selectedOptions[0].dataset.ram;
+        const ramType = ramSelect.selectedOptions[0].dataset.ram;
+        
+        if (mbRam === ramType) {
+            document.getElementById('ram-ok').style.display = 'block';
+            issues.push({type: 'success', text: `✅ Память ${ramType} поддерживается`});
+        } else {
+            document.getElementById('ram-warning').style.display = 'block';
+            issues.push({type: 'danger', text: `❌ Память ${ramType} не подходит (плата: ${mbRam})`});
+        }
+    }
+    
+    if (mbSelect?.value && caseSelect?.value) {
+        const mbForm = mbSelect.selectedOptions[0].dataset.form;
+        const caseForm = caseSelect.selectedOptions[0].dataset.form;
+        const compatMap = {
+            'ATX': ['ATX', 'Full Tower', 'Mid Tower', 'Super Tower', 'Mini Tower'],
+            'Micro-ATX': ['ATX', 'Micro-ATX', 'Full Tower', 'Mid Tower', 'Mini Tower'],
+            'Mini-ITX': ['ATX', 'Micro-ATX', 'Mini-ITX', 'Full Tower', 'Mid Tower', 'Mini Tower', 'SFF']
+        };
+        
+        if (compatMap[mbForm] && compatMap[mbForm].includes(caseForm)) {
+            issues.push({type: 'success', text: `✅ Плата ${mbForm} в корпус ${caseForm}`});
+        } else {
+            issues.push({type: 'danger', text: `❌ Плата ${mbForm} не войдёт в ${caseForm}`});
+        }
+    }
+    
+    if (gpuSelect?.value && caseSelect?.value) {
+        const gpuLen = parseInt(gpuSelect.selectedOptions[0].dataset.length) || 0;
+        const caseMax = parseInt(caseSelect.selectedOptions[0].dataset.gpuLength) || 400;
+        
+        if (gpuLen > 0 && gpuLen > caseMax) {
+            issues.push({type: 'danger', text: `❌ Видеокарта ${gpuLen}мм > макс ${caseMax}мм`});
+        } else if (gpuLen > 0) {
+            issues.push({type: 'success', text: `✅ Видеокарта ${gpuLen}мм влезает`});
+        }
+    }
+    
+    let resultsHTML = issues.map(i => 
+        `<p class="mb-1" style="font-size: 0.9rem; color: ${i.type === 'danger' ? '#ff4d6d' : '#2ecc71'};">${i.text}</p>`
+    ).join('');
+    
+    if (issues.filter(i => i.type === 'danger').length === 0 && issues.length > 0) {
+        resultsHTML += '<hr style="border-color:var(--border);"><p class="fw-bold" style="color: #2ecc71;">✅ Все компоненты совместимы!</p>';
+    }
+    
+    document.getElementById('compatibility-results').innerHTML = resultsHTML || '<p style="color: #8895c9;">Выберите компоненты для проверки</p>';
+}
+
+function addToCartBuild() {
+    let buildName = document.getElementById('build-name').value.trim();
+    if (!buildName) buildName = 'Сборка ПК';
+    
+    const existingNames = savedBuilds.map(b => b.name);
+    let counter = 1;
+    let originalName = buildName;
+    while (existingNames.includes(buildName)) {
+        counter++;
+        buildName = `${originalName} #${counter}`;
+    }
+    
+    document.getElementById('build-name').value = buildName;
+    
+    const selects = document.querySelectorAll('.component-select');
+    let components = [];
+    let totalPrice = 0;
+    
+    selects.forEach(select => {
+        if (select.value) {
+            const option = select.selectedOptions[0];
+            components.push({
+                id: select.value,
+                type: select.dataset.type,
+                name: option.dataset.name,
+                price: parseFloat(option.dataset.price),
+                image: option.dataset.image || ''
+            });
+            totalPrice += parseFloat(option.dataset.price);
+            
+            fetch(`/add_to_cart/${select.value}`).catch(err => console.error(err));
+        }
+    });
+    
+    if (components.length === 0) {
+        alert('❌ Выберите хотя бы один компонент!');
+        return;
+    }
+    
+    const build = {
+        name: buildName,
+        components: components,
+        totalPrice: totalPrice,
+        date: new Date().toLocaleString()
+    };
+    
+    savedBuilds.unshift(build);
+    if (savedBuilds.length > 10) savedBuilds.pop();
+    localStorage.setItem('pcBuilds', JSON.stringify(savedBuilds));
+    
+    renderSavedBuilds();
+    alert(`✅ Сборка "${buildName}" добавлена!\n${components.length} комп. на ${totalPrice.toLocaleString()} ₽\n\nТовары в корзине!`);
+}
+
+// ===== НОВЫЕ ФУНКЦИИ =====
+
+function buyBuild(name, price) {
+    if (confirm(`🛒 Купить сборку "${name}" за ${price.toLocaleString()} ₽?\n\nВы будете перенаправлены на страницу оплаты.`)) {
+        window.location.href = '/payment';
+    }
+}
+
+function updateCartCount() {
+    // Перезагружаем страницу чтобы обновить счётчик корзины в хедере
+    // ИЛИ делаем AJAX запрос для динамического обновления
+    fetch('/cart')
+        .then(() => {
+            // Редирект на корзину чтобы увидеть добавленные товары
+            setTimeout(() => {
+                if (confirm('✅ Товары добавлены в корзину! Перейти в корзину?')) {
+                    window.location.href = '/cart';
+                }
+            }, 300);
+        });
+}
+
+function renderSavedBuilds() {
+    const container = document.getElementById('saved-builds');
+    const noMsg = document.getElementById('no-builds-msg');
+    
+    if (savedBuilds.length === 0) {
+        if (noMsg) noMsg.style.display = 'block';
+        container.innerHTML = '';
+        return;
+    }
+    
+    if (noMsg) noMsg.style.display = 'none';
+    
+    container.innerHTML = savedBuilds.map((build, index) => `
+        <div class="col-md-6 col-lg-4">
+            <div class="build-card-item">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 style="color: #eef3ff; margin: 0; font-size: 0.95rem;">
+                        <i class="bi bi-pc-display me-2"></i>${build.name}
+                    </h6>
+                    <small style="color: #8895c9;">${build.date}</small>
+                </div>
+                <div class="mb-3">
+                    ${build.components.map(c => `
+                        <div class="d-flex justify-content-between align-items-center" style="font-size: 0.8rem; margin-bottom: 3px; padding: 5px; background: rgba(255,255,255,0.02); border-radius: 6px;">
+                            <img src="${c.image}" style="width: 25px; height: 25px; object-fit: contain; border-radius: 4px;" onerror="this.style.display='none'">
+                            <span style="color: #8895c9; flex: 1; margin-left: 8px;">${c.name.substring(0, 25)}...</span>
+                            <span style="color: #8bb5ff; font-weight: 600;">${c.price.toLocaleString()} ₽</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <hr style="border-color: var(--border);">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold" style="color: #2ecc71; font-size: 1.1rem;">${build.totalPrice.toLocaleString()} ₽</span>
+                    <span style="color: #8895c9; font-size: 0.8rem;">${build.components.length} комп.</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-success flex-fill" style="border-radius: 8px; font-weight: 600;" 
+                            onclick="buyBuild('${build.name.replace(/'/g, "\\'")}', ${build.totalPrice})">
+                        <i class="bi bi-credit-card me-1"></i>Купить
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" style="border-radius: 8px;" 
+                            onclick="removeBuild(${index})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function removeBuild(index) {
+    if (confirm('Удалить эту сборку?')) {
+        savedBuilds.splice(index, 1);
+        localStorage.setItem('pcBuilds', JSON.stringify(savedBuilds));
+        renderSavedBuilds();
+    }
+}
+
+function resetBuild() {
+    if (confirm('Сбросить все выбранные компоненты?')) {
+        document.querySelectorAll('.component-select').forEach(s => s.value = '');
+        document.getElementById('build-name').value = 'Моя сборка №1';
+        updateBuild();
+    }
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', function() {
+    renderSavedBuilds();
+    updateBuild();
+});
+</script>
+{% endblock %}

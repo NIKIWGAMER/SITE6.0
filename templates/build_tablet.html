@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pc-builder">
+    <h2 class="mb-2" style="color:#eef3ff; font-weight: 700;">
+        <i class="bi bi-tablet me-2" style="color: #f39c12;"></i>Выбор планшета
+    </h2>
+    <p style="color:#8895c9; margin-bottom:25px;">Подберите планшет для работы и развлечений</p>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                <div class="row g-3">
+                    {% for tablet in tablets %}
+                    <div class="col-md-4">
+                        <div class="tablet-card p-3" style="background: rgba(243,156,18,0.05); border: 1px solid var(--border-hover); border-radius: 12px; cursor: pointer; transition: all 0.3s;"
+                             onclick="selectTablet('{{ tablet.id }}', '{{ tablet.name }}', {{ tablet.price }}, '{{ tablet.image_url }}')">
+                            <img src="{{ tablet.image_url }}" style="width: 100%; height: 120px; object-fit: contain; background: #0a0f24; border-radius: 8px; margin-bottom: 10px;">
+                            <h6 style="color: #eef3ff; font-size: 0.85rem;">{{ tablet.name[:25] }}...</h6>
+                            <span class="fw-bold" style="color: #8bb5ff;">{{ "%.0f"|format(tablet.price) }} ₽</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <button class="btn btn-warning w-100 mt-4 text-white" onclick="addTabletToCart()" 
+                        style="background: var(--warning); border: none; padding: 14px; font-weight: 600; border-radius: 12px;">
+                    <i class="bi bi-cart-plus me-2"></i>Добавить в корзину
+                </button>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px; position: sticky; top: 20px;">
+                <h5 style="color: #eef3ff;">📋 Ваш планшет</h5>
+                <div id="tablet-preview" style="text-align: center; color: #8895c9; padding: 20px;">
+                    <i class="bi bi-tablet fs-1"></i>
+                    <p>Выберите планшет</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedTabletData = null;
+
+function selectTablet(id, name, price, image) {
+    document.querySelectorAll('.tablet-card').forEach(el => el.style.borderColor = 'var(--border-hover)');
+    event.currentTarget.style.borderColor = '#f39c12';
+    
+    selectedTabletData = {id, name, price, image};
+    
+    document.getElementById('tablet-preview').innerHTML = `
+        <img src="${image}" style="width: 200px; height: 200px; object-fit: contain;">
+        <h6 style="color: #eef3ff; margin-top: 10px;">${name}</h6>
+        <p class="fw-bold" style="color: #8bb5ff; font-size: 1.3rem;">${price.toLocaleString()} ₽</p>
+    `;
+}
+
+function addTabletToCart() {
+    if (!selectedTabletData) {
+        alert('❌ Выберите планшет!');
+        return;
+    }
+    
+    fetch(`/add_to_cart/${selectedTabletData.id}`)
+        .then(() => {
+            alert(`✅ ${selectedTabletData.name} добавлен в корзину!`);
+            window.location.href = '/cart';
+        });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ===== 1. КАРТОЧКА "СБОРКА УСТРОЙСТВ" (широкая) ===== -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="builder-card" style="background: linear-gradient(135deg, #1a1a3e, #2a1a5e); border-radius: 20px; overflow: hidden; border: 2px solid var(--border-hover); transition: all 0.3s ease; cursor: pointer; position: relative;">
+            <div class="row g-0">
+                <div class="col-md-8 p-4" onclick="toggleBuilderMenu()">
+                    <div class="d-flex align-items-center gap-4">
+                        <div style="width: 80px; height: 80px; background: var(--accent-gradient); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(91,141,239,0.4);">
+                            <i class="bi bi-tools fs-1 text-white"></i>
+                        </div>
+                        <div>
+                            <h3 style="color: #fff; font-weight: 700; margin-bottom: 5px;">🛠️ Сборка устройств</h3>
+                            <p style="color: #8895c9; margin-bottom: 0; font-size: 1.1rem;">Соберите свой идеальный ПК, ноутбук, телефон или планшет с проверкой совместимости</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-none d-md-flex align-items-center justify-content-center" style="background: rgba(91,141,239,0.1);" onclick="toggleBuilderMenu()">
+                    <div class="text-center">
+                        <i class="bi bi-chevron-down fs-2" style="color: #5b8def;" id="builder-arrow"></i>
+                        <p style="color: #8895c9; margin-top: 5px;">Выбрать устройство</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="builder-menu" style="display: none; background: rgba(16,21,46,0.98); border-top: 2px solid var(--accent); padding: 25px;">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('build_pc') }}" class="text-decoration-none">
+                            <div style="background: rgba(91,141,239,0.1); border: 1px solid rgba(91,141,239,0.3); border-radius: 16px; padding: 25px 20px; text-align: center; transition: all 0.3s ease;" onmouseenter="this.style.transform='translateY(-3px)'; this.style.borderColor='#5b8def'" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(91,141,239,0.3)'">
+                                <i class="bi bi-pc-display-horizontal fs-1" style="color: #5b8def;"></i>
+                                <h5 style="color: #fff; margin-top: 12px;">🖥️ Сборка ПК</h5>
+                                <small style="color: #8895c9;">Процессор, видеокарта, память</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('build_laptop') }}" class="text-decoration-none">
+                            <div style="background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.3); border-radius: 16px; padding: 25px 20px; text-align: center; transition: all 0.3s ease;" onmouseenter="this.style.transform='translateY(-3px)'; this.style.borderColor='#2ecc71'" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(46,204,113,0.3)'">
+                                <i class="bi bi-laptop fs-1" style="color: #2ecc71;"></i>
+                                <h5 style="color: #fff; margin-top: 12px;">💻 Сборка ноутбука</h5>
+                                <small style="color: #8895c9;">Экран, процессор, память</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('build_phone') }}" class="text-decoration-none">
+                            <div style="background: rgba(255,77,109,0.1); border: 1px solid rgba(255,77,109,0.3); border-radius: 16px; padding: 25px 20px; text-align: center; transition: all 0.3s ease;" onmouseenter="this.style.transform='translateY(-3px)'; this.style.borderColor='#ff4d6d'" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,77,109,0.3)'">
+                                <i class="bi bi-phone fs-1" style="color: #ff4d6d;"></i>
+                                <h5 style="color: #fff; margin-top: 12px;">📱 Сборка телефона</h5>
+                                <small style="color: #8895c9;">Экран, камера, память</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('build_tablet') }}" class="text-decoration-none">
+                            <div style="background: rgba(243,156,18,0.1); border: 1px solid rgba(243,156,18,0.3); border-radius: 16px; padding: 25px 20px; text-align: center; transition: all 0.3s ease;" onmouseenter="this.style.transform='translateY(-3px)'; this.style.borderColor='#f39c12'" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(243,156,18,0.3)'">
+                                <i class="bi bi-tablet fs-1" style="color: #f39c12;"></i>
+                                <h5 style="color: #fff; margin-top: 12px;">📋 Сборка планшета</h5>
+                                <small style="color: #8895c9;">Дисплей, процессор, стилус</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 2. ЧЕТЫРЕ КВАДРАТНЫЕ КАРТОЧКИ КАТЕГОРИЙ ===== -->
+<div class="row g-3 mb-4">
+    <!-- Карточка 1: Смартфоны и гаджеты -->
+    <div class="col-6 col-md-3">
+        <div class="category-card" style="background: linear-gradient(135deg, #141d3a, #0f1630); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-hover); transition: all 0.3s ease; height: 100%;">
+            <div style="position: relative; height: 100px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=200&fit=crop" alt="Смартфоны" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, rgba(15,22,48,0.95) 100%);"></div>
+                <h6 class="position-absolute fw-bold" style="bottom: 8px; left: 12px; color: #fff; font-size: 0.95rem; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); z-index: 1;">📱 Смартфоны и гаджеты</h6>
+            </div>
+            <div style="padding: 12px; display: flex; flex-wrap: wrap; gap: 4px;">
+                <a href="{{ url_for('catalog', category='Смартфоны') }}" class="badge text-decoration-none" style="background: var(--accent); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Телефоны</a>
+                <a href="{{ url_for('catalog', category='Планшеты') }}" class="badge text-decoration-none" style="background: var(--accent); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Планшеты</a>
+                <a href="{{ url_for('catalog', category='Умные часы') }}" class="badge text-decoration-none" style="background: var(--accent); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Часы</a>
+                <a href="{{ url_for('catalog', category='Наушники') }}" class="badge text-decoration-none" style="background: var(--accent); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Наушники</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка 2: ПК и комплектующие -->
+    <div class="col-6 col-md-3">
+        <div class="category-card" style="background: linear-gradient(135deg, #1a2a1a, #0f1f0f); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-hover); transition: all 0.3s ease; height: 100%;">
+            <div style="position: relative; height: 100px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?w=400&h=200&fit=crop" alt="ПК" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, rgba(15,31,15,0.95) 100%);"></div>
+                <h6 class="position-absolute fw-bold" style="bottom: 8px; left: 12px; color: #fff; font-size: 0.95rem; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); z-index: 1;">💻 ПК и комплектующие</h6>
+            </div>
+            <div style="padding: 12px; display: flex; flex-wrap: wrap; gap: 4px;">
+                <a href="{{ url_for('catalog', category='Процессоры') }}" class="badge text-decoration-none" style="background: var(--success); color: #fff; font-size: 0.65rem; padding: 5px 8px;">CPU</a>
+                <a href="{{ url_for('catalog', category='Видеокарты') }}" class="badge text-decoration-none" style="background: var(--success); color: #fff; font-size: 0.65rem; padding: 5px 8px;">GPU</a>
+                <a href="{{ url_for('catalog', category='Материнские платы') }}" class="badge text-decoration-none" style="background: var(--success); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Мат.платы</a>
+                <a href="{{ url_for('catalog', category='Оперативная память') }}" class="badge text-decoration-none" style="background: var(--success); color: #fff; font-size: 0.65rem; padding: 5px 8px;">ОЗУ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка 3: Телевизоры и консоли -->
+    <div class="col-6 col-md-3">
+        <div class="category-card" style="background: linear-gradient(135deg, #1a1a3a, #0f0f2a); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-hover); transition: all 0.3s ease; height: 100%;">
+            <div style="position: relative; height: 100px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=200&fit=crop" alt="ТВ" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, rgba(15,15,42,0.95) 100%);"></div>
+                <h6 class="position-absolute fw-bold" style="bottom: 8px; left: 12px; color: #fff; font-size: 0.95rem; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); z-index: 1;">🎮 ТВ и развлечения</h6>
+            </div>
+            <div style="padding: 12px; display: flex; flex-wrap: wrap; gap: 4px;">
+                <a href="{{ url_for('catalog', category='Телевизоры') }}" class="badge text-decoration-none" style="background: #5b8def; color: #fff; font-size: 0.65rem; padding: 5px 8px;">ТВ</a>
+                <a href="{{ url_for('catalog', category='Игровые консоли') }}" class="badge text-decoration-none" style="background: #5b8def; color: #fff; font-size: 0.65rem; padding: 5px 8px;">Консоли</a>
+                <a href="{{ url_for('catalog', category='Мониторы') }}" class="badge text-decoration-none" style="background: #5b8def; color: #fff; font-size: 0.65rem; padding: 5px 8px;">Мониторы</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка 4: Умный дом и техника -->
+    <div class="col-6 col-md-3">
+        <div class="category-card" style="background: linear-gradient(135deg, #3a1a2a, #2a0f1a); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-hover); transition: all 0.3s ease; height: 100%;">
+            <div style="position: relative; height: 100px; overflow: hidden;">
+                <img src="https://images.unsplash.com/photo-1558002038-1055907df827?w=400&h=200&fit=crop" alt="Умный дом" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, rgba(42,15,26,0.95) 100%);"></div>
+                <h6 class="position-absolute fw-bold" style="bottom: 8px; left: 12px; color: #fff; font-size: 0.95rem; text-shadow: 2px 2px 6px rgba(0,0,0,0.8); z-index: 1;">🏠 Умный дом</h6>
+            </div>
+            <div style="padding: 12px; display: flex; flex-wrap: wrap; gap: 4px;">
+                <a href="{{ url_for('catalog', category='Умный дом') }}" class="badge text-decoration-none" style="background: var(--danger); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Устройства</a>
+                <a href="{{ url_for('catalog', category='Экосистемы умного дома') }}" class="badge text-decoration-none" style="background: var(--danger); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Экосистемы</a>
+                <a href="{{ url_for('catalog', category='Сетевое оборудование') }}" class="badge text-decoration-none" style="background: var(--danger); color: #fff; font-size: 0.65rem; padding: 5px 8px;">Сеть</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ЗАКАЗАТЬ РЕМОНТ (широкая кнопка) ===== -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <a href="{{ url_for('repair_order') }}" class="text-decoration-none">
+            <div class="repair-card" style="background: linear-gradient(135deg, #3a1a1a, #5a1a1a); border-radius: 20px; overflow: hidden; border: 2px solid var(--danger); transition: all 0.3s ease; cursor: pointer;">
+                <div class="row g-0">
+                    <div class="col-md-8 p-4">
+                        <div class="d-flex align-items-center gap-4">
+                            <div style="width: 70px; height: 70px; background: var(--danger); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(255,77,109,0.4);">
+                                <i class="bi bi-tools fs-1 text-white"></i>
+                            </div>
+                            <div>
+                                <h3 style="color: #fff; font-weight: 700; margin-bottom: 5px;">🔧 Заказать ремонт устройства</h3>
+                                <p style="color: #ffb3c1; margin-bottom: 0; font-size: 1.1rem;">
+                                    Заполните заявку — мы перезвоним и поможем!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-none d-md-flex align-items-center justify-content-center" style="background: rgba(255,77,109,0.1);">
+                        <i class="bi bi-wrench-adjustable fs-1" style="color: #ff4d6d;"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- 4. ПОПУЛЯРНЫЕ ТОВАРЫ (ПЕРЕМЕЩЕНО ВВЕРХ) -->
+{% if categories_display %}
+<section class="mb-5">
+    <h4 class="mb-3" style="color:#eef3ff;">🔥 Популярные товары</h4>
+    <div class="row g-3">
+        {% for cat_name, products in categories_display.items() %}
+        {% if products %}
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 style="color: #eef3ff; margin: 0;">
+                    {% if cat_name == 'Смартфоны' %}📱
+                    {% elif cat_name == 'Ноутбуки' %}💻
+                    {% elif cat_name == 'Видеокарты' %}🎮
+                    {% elif cat_name == 'Процессоры' %}⚡
+                    {% elif cat_name == 'Игровые консоли' %}🕹️
+                    {% endif %}
+                    {{ cat_name }}
+                </h5>
+                <a href="{{ url_for('catalog', category=cat_name) }}" class="btn btn-sm btn-outline-light">Смотреть все</a>
+            </div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-2">
+                {% for p in products[:5] %}
+                <div class="col">
+                    {% include 'product_card.html' %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- 5. НЕДАВНО ПРОСМОТРЕННЫЕ (ТЕПЕРЬ НИЖЕ) -->
+{% if recent_products %}
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0" style="color:#eef3ff;">👁️ Вы недавно смотрели</h4>
+        <a href="{{ url_for('catalog') }}" class="btn btn-sm btn-outline-info">Все товары →</a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
+        {% for p in recent_products[:12] %}
+        <div class="col">
+            <a href="{{ url_for('product', product_id=p.id) }}" class="text-decoration-none">
+                <div class="card bg-card h-100" style="border-radius: 14px; overflow: hidden; cursor: pointer;">
+                    <div style="height: 130px; background: #0a0f24; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                        <img src="{{ p.image_url }}" alt="{{ p.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                    <div class="card-body p-2 text-center">
+                        <small style="color: #e0e4f0;">{{ p.name[:30] }}...</small>
+                        <p class="fw-bold mb-2" style="color: #8bb5ff; font-size: 0.9rem;">{{ "%.0f"|format(p.price) }} ₽</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- 5. НЕДАВНО ПРОСМОТРЕННЫЕ (ТЕПЕРЬ НИЖЕ) -->
+{% if recent_products %}
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0" style="color:#eef3ff;">👁️ Вы недавно смотрели</h4>
+        <a href="{{ url_for('catalog') }}" class="btn btn-sm btn-outline-info">Все товары →</a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
+        {% for p in recent_products[:12] %}
+        <div class="col">
+            <a href="{{ url_for('product', product_id=p.id) }}" class="text-decoration-none">
+                <div class="card bg-card h-100" style="border-radius: 14px; overflow: hidden; cursor: pointer;">
+                    <div style="height: 130px; background: #0a0f24; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                        <img src="{{ p.image_url }}" alt="{{ p.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                    <div class="card-body p-2 text-center">
+                        <small style="color: #e0e4f0;">{{ p.name[:30] }}...</small>
+                        <p class="fw-bold mb-2" style="color: #8bb5ff; font-size: 0.9rem;">{{ "%.0f"|format(p.price) }} ₽</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<style>
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    border-color: #5b8def !important;
+}
+
+#brandsScrollContainer::-webkit-scrollbar {
+    height: 5px;
+}
+#brandsScrollContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+#brandsScrollContainer::-webkit-scrollbar-thumb {
+    background: #2a3870;
+    border-radius: 10px;
+}
+#brandsScrollContainer::-webkit-scrollbar-thumb:hover {
+    background: #5b8def;
+}
+
+.card.bg-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    border-color: #5b8def;
+}
+
+.builder-card:hover {
+    border-color: #5b8def !important;
+    box-shadow: 0 12px 40px rgba(91,141,239,0.2);
+}
+</style>
+
+<script>
+function toggleBuilderMenu() {
+    const menu = document.getElementById('builder-menu');
+    const arrow = document.getElementById('builder-arrow');
+    
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        if (arrow) {
+            arrow.classList.remove('bi-chevron-down');
+            arrow.classList.add('bi-chevron-up');
+        }
+    } else {
+        menu.style.display = 'none';
+        if (arrow) {
+            arrow.classList.remove('bi-chevron-up');
+            arrow.classList.add('bi-chevron-down');
+        }
+    }
+}
+
+function scrollBrands(direction) {
+    const container = document.getElementById('brandsScrollContainer');
+    const scrollAmount = 350 * direction;
+    container.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+    });
+}
+</script>
+{% endblock %}

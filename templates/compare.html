@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="compare-page">
+    <h2 class="mb-4" style="color:#eef3ff; font-weight: 700;">📊 Сравнение товаров</h2>
+    
+    {% if products %}
+    <div class="table-responsive">
+        <table class="table table-dark" style="border-collapse: separate; border-spacing: 0 10px; --bs-table-bg: transparent;">
+            <thead>
+                <tr>
+                    <th style="width: 200px; background: var(--bg-card); border-radius: 12px 0 0 12px;">Характеристика</th>
+                    {% for product in products %}
+                    <th style="min-width: 250px; background: var(--bg-card); text-align: center; {% if loop.last %}border-radius: 0 12px 12px 0;{% endif %}">
+                        <div class="position-relative p-3">
+                            <a href="{{ url_for('remove_from_compare', product_id=product.id) }}" 
+                               class="btn btn-sm btn-outline-danger position-absolute" 
+                               style="top: 5px; right: 5px; border-radius: 50%; width: 30px; height: 30px; padding: 0;">
+                                ✕
+                            </a>
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}" 
+                                 style="height: 120px; object-fit: contain; margin-bottom: 10px;">
+                            <h6 style="color:#fff; margin-bottom: 5px;">{{ product.name[:25] }}...</h6>
+                            <p class="fw-bold mb-2" style="color:#8bb5ff;">{{ "%.0f"|format(product.price) }} ₽</p>
+                            <span class="badge" style="background: var(--accent);">{{ product.category }}</span>
+                        </div>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="background: var(--bg-card); font-weight: 600; color: #eef3ff; padding: 12px 20px;">💰 Цена</td>
+                    {% for product in products %}
+                    <td class="text-center" style="background: rgba(42,75,179,0.05); padding: 12px;">
+                        <span style="color: #8bb5ff; font-weight: 700; font-size: 1.1rem;">
+                            {{ "%.0f"|format(product.price) }} ₽
+                        </span>
+                        {% if product.old_price %}
+                        <br><small style="color: #ff4d6d; text-decoration: line-through;">{{ "%.0f"|format(product.old_price) }} ₽</small>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                <tr>
+                    <td style="background: var(--bg-card); font-weight: 600; color: #eef3ff; padding: 12px 20px;">📁 Категория</td>
+                    {% for product in products %}
+                    <td class="text-center" style="padding: 12px;">
+                        <span style="color: #eef3ff;">{{ product.category }}</span>
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                <tr>
+                    <td style="background: var(--bg-card); font-weight: 600; color: #eef3ff; padding: 12px 20px;">🏷️ Бренд</td>
+                    {% for product in products %}
+                    <td class="text-center" style="padding: 12px;">
+                        <span style="color: #eef3ff;">{{ product.brand or '—' }}</span>
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                <tr>
+                    <td style="background: var(--bg-card); font-weight: 600; color: #eef3ff; padding: 12px 20px;">⭐ Рейтинг</td>
+                    {% for product in products %}
+                    <td class="text-center" style="padding: 12px;">
+                        <span style="color: #ffc107; font-weight: 700; font-size: 1.2rem;">
+                            {{ product.rating }}/5
+                        </span>
+                        <div style="color: #ffc107;">
+                            {% for i in range(5) %}
+                                {% if i < product.rating|int %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                <tr>
+                    <td style="background: var(--bg-card); font-weight: 600; color: #eef3ff; padding: 12px 20px;">📝 Описание</td>
+                    {% for product in products %}
+                    <td style="padding: 12px;">
+                        <small style="color: #8895c9;">{{ product.description[:150] }}{% if product.description|length > 150 %}...{% endif %}</small>
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                {% for spec_name in all_specs %}
+                <tr>
+                    <td style="background: var(--bg-card); font-weight: 600; color: #eef3ff; padding: 12px 20px;">
+                        {{ spec_name }}
+                    </td>
+                    {% for product in products %}
+                    <td class="text-center" style="padding: 12px;">
+                        <span style="color: #eef3ff;">
+                            {{ product.get_specs().get(spec_name, '—') }}
+                        </span>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {# Вычисляем лучший товар в Python, а не в шаблоне #}
+    <div class="row g-3 mt-4">
+        {% for product in products %}
+        <div class="col-md-{{ (12 // products|length) if products|length > 0 else 12 }}">
+            <div style="background: var(--bg-card); border: 2px solid {% if loop.index0 == best_index %} #2ecc71 {% else %} var(--border-hover) {% endif %}; border-radius: 16px; padding: 25px; text-align: center; position: relative; overflow: hidden;">
+                
+                {% if loop.index0 == best_index %}
+                <div style="position: absolute; top: 10px; right: 10px; background: #2ecc71; color: #000; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
+                    🏆 Лучший выбор
+                </div>
+                {% endif %}
+                
+                <h5 style="color: #eef3ff;">{{ product.name[:20] }}...</h5>
+                
+                {# Вычисляем минимальную цену #}
+                {% set prices_list = [] %}
+                {% for p in products %}{% set _ = prices_list.append(p.price) %}{% endfor %}
+                {% set min_price = prices_list|min %}
+                {% set max_price = prices_list|max %}
+                
+                <div style="margin: 20px 0;">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="color: #8895c9;">Цена</span>
+                        {% if product.price == min_price %}
+                        <span style="color: #2ecc71; font-weight: 700;">✓ Лучшая ({{ "%.0f"|format(product.price) }} ₽)</span>
+                        {% else %}
+                        <span style="color: #8895c9;">{{ "%.0f"|format(product.price) }} ₽</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span style="color: #8895c9;">Рейтинг</span>
+                        {% set ratings_list = [] %}
+                        {% for p in products %}{% set _ = ratings_list.append(p.rating) %}{% endfor %}
+                        {% set max_rating = ratings_list|max %}
+                        {% if product.rating == max_rating %}
+                        <span style="color: #2ecc71; font-weight: 700;">✓ Высший ({{ product.rating }})</span>
+                        {% else %}
+                        <span style="color: #8895c9;">{{ product.rating }}/5</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% set score = (product.rating * 20) + (100 - (product.price / max_price * 100)) if max_price > 0 else 50 %}
+                <div style="font-size: 3rem; font-weight: 800; color: {% if loop.index0 == best_index %}#2ecc71{% else %}#5b8def{% endif %}; margin: 10px 0;">
+                    {{ "%.0f"|format(score|float) }}
+                </div>
+                <p style="color: #8895c9;">из 100 баллов</p>
+                
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-sm btn-primary" style="background: var(--accent); border: none;">
+                        В корзину
+                    </a>
+                    <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-sm btn-outline-info">
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('catalog') }}" class="btn btn-outline-info">← Продолжить покупки</a>
+        <a href="{{ url_for('clear_compare') }}" class="btn btn-outline-danger">Очистить сравнение</a>
+    </div>
+    
+    {% else %}
+    <div style="color:#8895c9; padding:60px; text-align:center;">
+        <i class="bi bi-arrow-left-right fs-1 mb-3 d-block"></i>
+        <p style="font-size:1.2rem;">📊 Список сравнения пуст</p>
+        <p>Добавляйте товары одной категории для сравнения</p>
+        <a href="{{ url_for('catalog') }}" class="btn btn-outline-info mt-3">Перейти в каталог</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

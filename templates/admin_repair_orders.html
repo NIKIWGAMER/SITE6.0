@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-panel">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="color: #eef3ff;"><i class="bi bi-tools me-2" style="color: #ff4d6d;"></i>Заявки на ремонт</h2>
+        <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-info">← Назад</a>
+    </div>
+
+    {% if orders %}
+    <div class="row g-3">
+        {% for order in orders %}
+        <div class="col-md-6">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 20px;">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge" style="background: {% if order.status == 'Новая заявка' %}#ff4d6d{% else %}#f39c12{% endif %};">
+                        {{ order.status }}
+                    </span>
+                    <small style="color: #8895c9;">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                </div>
+                <h6 style="color: #eef3ff;">{{ order.client_name }} — {{ order.phone }}</h6>
+                <p style="color: #8895c9;">📱 {{ order.device_type }}: {{ order.device_model }}</p>
+                <p style="color: #eef3ff;">📝 {{ order.problem_description[:100] }}...</p>
+                <small style="color: #8895c9;">Связь: {{ order.contact_method }}, {{ order.call_time }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="color: #8895c9; text-align: center; padding: 40px;">Заявок пока нет</p>
+    {% endif %}
+</div>
+{% endblock %}

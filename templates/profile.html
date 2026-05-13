@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 20px; padding: 40px;">
+            
+            <!-- Аватар -->
+            <div class="text-center mb-4">
+                <div class="position-relative d-inline-block">
+                    <div id="avatar-container" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; cursor: pointer; background: linear-gradient(135deg, #5b8def, #2a5dc7);">
+                        {% if current_user.avatar_url %}
+                        <img id="avatar-img" src="{{ current_user.avatar_url }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                        <div id="avatar-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #fff; font-weight: 700;">
+                            {{ current_user.username[0] | upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div style="position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid var(--bg-card);"
+                         onclick="document.getElementById('avatar-input').click()">
+                        <i class="bi bi-camera-fill text-white" style="font-size: 0.9rem;"></i>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="uploadAvatar(event)">
+                </div>
+                <h3 style="color: #eef3ff; margin-top: 15px;">{{ current_user.username }}</h3>
+                <p style="color: #8895c9;">{{ current_user.email }}</p>
+                {% if current_user.is_admin %}
+                <span class="badge" style="background: linear-gradient(135deg, #ffc107, #ff4d6d); font-size: 0.9rem; padding: 8px 20px;">
+                    <i class="bi bi-shield-lock-fill me-2"></i>Администратор
+                </span>
+                {% endif %}
+            </div>
+            
+            {% if current_user.is_admin %}
+            <!-- БЫСТРЫЕ КАРТОЧКИ ДЛЯ АДМИНА -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin_panel') }}" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #2a4bb3, #1a3a8a); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;">
+                            <i class="bi bi-box-seam fs-1" style="color: #fff;"></i>
+                            <h5 style="color: #fff; margin: 10px 0 5px;">Товары</h5>
+                            <p style="color: #b9c2e5; margin: 0;">{{ products_count }} товаров</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin_repair_orders') }}" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #dc3545, #a71d2a); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;">
+                            <i class="bi bi-tools fs-1" style="color: #fff;"></i>
+                            <h5 style="color: #fff; margin: 10px 0 5px;">Заявки</h5>
+                            <p style="color: #ffb3c1; margin: 0;">{{ repair_count }} заявок</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin_add_product') }}" class="text-decoration-none">
+                        <div style="background: linear-gradient(135deg, #28a745, #1e7e34); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;">
+                            <i class="bi bi-plus-circle fs-1" style="color: #fff;"></i>
+                            <h5 style="color: #fff; margin: 10px 0 5px;">Добавить</h5>
+                            <p style="color: #a5d6a5; margin: 0;">Новый товар</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Статистика для обычного пользователя -->
+            {% if not current_user.is_admin %}
+            <div class="row g-3 text-center mb-4">
+                <div class="col-md-6">
+                    <div style="background: rgba(91,141,239,0.05); border-radius: 16px; padding: 20px;">
+                        <i class="bi bi-cart-check fs-2" style="color: #5b8def;"></i>
+                        <h4 style="color: #eef3ff; margin: 10px 0;">{{ session.get('cart', {})|length }}</h4>
+                        <p style="color: #8895c9;">Товаров в корзине</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="background: rgba(255,77,109,0.05); border-radius: 16px; padding: 20px;">
+                        <i class="bi bi-heart fs-2" style="color: #ff4d6d;"></i>
+                        <h4 style="color: #eef3ff; margin: 10px 0;">{{ session.get('favorites', [])|length }}</h4>
+                        <p style="color: #8895c9;">В избранном</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-light w-100" style="border-radius: 25px; padding: 12px;">
+                <i class="bi bi-box-arrow-right me-2"></i>Выйти из аккаунта
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function uploadAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('avatar', file);
+    fetch('/upload_avatar', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert('Ошибка загрузки');
+        });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="cart-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="color:#eef3ff; font-weight: 700;">
+            <i class="bi bi-cart3 me-2"></i>Корзина
+        </h2>
+        <a href="{{ url_for('catalog') }}" class="btn btn-outline-info" style="border-radius: 25px;">
+            <i class="bi bi-arrow-left me-2"></i>Продолжить покупки
+        </a>
+    </div>
+
+    {% if products %}
+        <div class="row g-3 mb-4">
+            {% for item in products %}
+            <div class="col-12">
+                <div class="cart-item-card" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 20px; transition: all 0.3s ease;">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" 
+                                 style="width: 100px; height: 100px; object-fit: contain; background: #0a0f24; border-radius: 12px; padding: 10px;">
+                        </div>
+                        
+                        <div class="col-md-5">
+                            <a href="{{ url_for('product', product_id=item.product.id) }}" class="text-decoration-none">
+                                <h5 style="color: #eef3ff; font-weight: 600;">{{ item.product.name }}</h5>
+                            </a>
+                            <p style="color: #8895c9; font-size: 0.85rem; margin-bottom: 5px;">
+                                {{ item.product.description[:120] }}{% if item.product.description|length > 120 %}...{% endif %}
+                            </p>
+                            <span class="badge" style="background: var(--accent);">{{ item.product.category }}</span>
+                            {% if item.product.brand %}
+                            <span class="badge" style="background: rgba(139,181,255,0.2); color: #8bb5ff;">{{ item.product.brand }}</span>
+                            {% endif %}
+                            
+                            {% set specs = item.product.get_specs() %}
+                            {% if specs %}
+                            <div class="mt-2">
+                                {% set spec_items = specs.items() | list %}
+                                {% for key, value in spec_items[:3] %}
+                                <span style="color: #8895c9; font-size: 0.75rem;">{{ key }}: <span style="color: #eef3ff;">{{ value }}</span></span><br>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-2 text-center">
+                            <span class="badge" style="background: var(--accent); font-size: 1rem; padding: 8px 15px;">
+                                {{ item.quantity }} шт.
+                            </span>
+                        </div>
+                        
+                        <div class="col-md-1 text-center">
+                            <span style="color: #8bb5ff; font-weight: 700; font-size: 1.1rem;">
+                                {{ "%.0f"|format(item.product.price) }} ₽
+                            </span>
+                        </div>
+                        
+                        <div class="col-md-2 text-center">
+                            <span style="color: #2ecc71; font-weight: 700; font-size: 1.1rem; display: block; margin-bottom: 10px;">
+                                {{ "%.0f"|format(item.product.price * item.quantity) }} ₽
+                            </span>
+                            <a href="{{ url_for('remove_from_cart', product_id=item.product.id) }}" 
+                               class="btn btn-sm btn-outline-danger" style="border-radius: 20px;">
+                                <i class="bi bi-trash me-1"></i>Удалить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="row">
+            <div class="col-lg-5 ms-auto">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px; position: sticky; top: 20px;">
+                    <h5 style="color: #eef3ff; margin-bottom: 20px;">
+                        <i class="bi bi-receipt me-2"></i>Итого заказа
+                    </h5>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color: #8895c9;">Товаров:</span>
+                        <span style="color: #eef3ff;">{{ products|length }} наименований</span>
+                    </div>
+                    
+                    <hr style="border-color: var(--border);">
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color: #eef3ff; font-weight: 600;">Итого к оплате:</span>
+                        <span style="color: #8bb5ff; font-weight: 700; font-size: 1.5rem;">{{ "%.0f"|format(total) }} ₽</span>
+                    </div>
+                    
+                    <a href="{{ url_for('payment') }}" class="btn btn-primary w-100 mb-3" 
+                       style="background: var(--accent-gradient); border: none; padding: 15px; font-weight: 600; font-size: 1.1rem; border-radius: 12px;">
+                        <i class="bi bi-credit-card me-2"></i>Перейти к оплате
+                    </a>
+                    
+                    <a href="{{ url_for('clear_cart') }}" class="btn btn-outline-danger w-100" style="border-radius: 12px; padding: 12px;">
+                        <i class="bi bi-trash me-2"></i>Очистить корзину
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 60px 20px; background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px;">
+            <i class="bi bi-cart-x fs-1" style="color: #8895c9;"></i>
+            <h4 style="color: #eef3ff; margin-top: 15px;">Корзина пуста</h4>
+            <p style="color: #8895c9;">Добавьте товары из каталога</p>
+            <a href="{{ url_for('catalog') }}" class="btn btn-outline-info mt-3" style="border-radius: 25px; padding: 10px 30px;">
+                <i class="bi bi-grid me-2"></i>Перейти в каталог
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.cart-item-card:hover {
+    border-color: #5b8def !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+</style>
+{% endblock %}

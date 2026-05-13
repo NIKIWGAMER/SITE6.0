@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="checkout-page">
+    <h2 class="mb-4" style="color: #eef3ff; font-weight: 700;">
+        <i class="bi bi-credit-card me-2"></i>Оформление заказа
+    </h2>
+    
+    <div class="row g-4">
+        <!-- Левая колонка - форма -->
+        <div class="col-lg-8">
+            <!-- Контактные данные -->
+            <div class="checkout-section mb-4" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                <h5 style="color: #eef3ff; margin-bottom: 20px;">
+                    <i class="bi bi-person me-2"></i>Контактные данные
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Имя *</label>
+                        <input type="text" class="form-control checkout-input" placeholder="Иван" value="{{ current_user.username if current_user.is_authenticated else '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Фамилия *</label>
+                        <input type="text" class="form-control checkout-input" placeholder="Иванов">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Телефон *</label>
+                        <input type="tel" class="form-control checkout-input" placeholder="+7 (999) 123-45-67">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Email *</label>
+                        <input type="email" class="form-control checkout-input" placeholder="email@example.com" value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Доставка -->
+            <div class="checkout-section mb-4" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                <h5 style="color: #eef3ff; margin-bottom: 20px;">
+                    <i class="bi bi-truck me-2"></i>Способ доставки
+                </h5>
+                <div class="delivery-options">
+                    <label class="delivery-option active" style="display: block; background: rgba(91,141,239,0.1); border: 2px solid #5b8def; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer;">
+                        <input type="radio" name="delivery" value="courier" checked style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span style="color: #eef3ff; font-weight: 600;">🚚 Курьерская доставка</span>
+                                <small style="color: #8895c9; display: block;">Доставка до двери, 1-3 дня</small>
+                            </div>
+                            <span style="color: #8bb5ff; font-weight: 700;">350 ₽</span>
+                        </div>
+                    </label>
+                    
+                    <label class="delivery-option" style="display: block; background: rgba(255,255,255,0.02); border: 2px solid var(--border-hover); border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer;">
+                        <input type="radio" name="delivery" value="pickup" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span style="color: #eef3ff; font-weight: 600;">📦 Самовывоз</span>
+                                <small style="color: #8895c9; display: block;">Пункт выдачи, 1-2 дня</small>
+                            </div>
+                            <span style="color: #2ecc71; font-weight: 700;">Бесплатно</span>
+                        </div>
+                    </label>
+                </div>
+                
+                <!-- Адрес -->
+                <div id="address-field" class="mt-3">
+                    <label class="form-label" style="color: #8895c9;">Адрес доставки *</label>
+                    <input type="text" class="form-control checkout-input" placeholder="Город, улица, дом, квартира">
+                </div>
+            </div>
+            
+            <!-- Оплата -->
+            <div class="checkout-section mb-4" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                <h5 style="color: #eef3ff; margin-bottom: 20px;">
+                    <i class="bi bi-wallet2 me-2"></i>Способ оплаты
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="payment-option active" style="display: block; background: rgba(255,255,255,0.02); border: 2px solid #5b8def; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer;">
+                            <input type="radio" name="payment" value="card" checked style="display: none;">
+                            <i class="bi bi-credit-card fs-1" style="color: #5b8def;"></i>
+                            <p style="color: #eef3ff; margin-top: 8px; margin-bottom: 0;">Картой онлайн</p>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="payment-option" style="display: block; background: rgba(255,255,255,0.02); border: 2px solid var(--border-hover); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer;">
+                            <input type="radio" name="payment" value="sbp" style="display: none;">
+                            <i class="bi bi-phone fs-1" style="color: #2ecc71;"></i>
+                            <p style="color: #eef3ff; margin-top: 8px; margin-bottom: 0;">СБП (по QR)</p>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="payment-option" style="display: block; background: rgba(255,255,255,0.02); border: 2px solid var(--border-hover); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer;">
+                            <input type="radio" name="payment" value="cash" style="display: none;">
+                            <i class="bi bi-cash fs-1" style="color: #f39c12;"></i>
+                            <p style="color: #eef3ff; margin-top: 8px; margin-bottom: 0;">При получении</p>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Правая колонка - итог -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 20px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                    <h5 style="color: #eef3ff; margin-bottom: 20px;">
+                        <i class="bi bi-bag-check me-2"></i>Ваш заказ
+                    </h5>
+                    
+                    <!-- Список товаров -->
+                    {% if products %}
+                    <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                        {% for item in products %}
+                        <div class="d-flex gap-3 mb-3 pb-3" style="border-bottom: 1px solid rgba(30,42,74,0.3);">
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" 
+                                 style="width: 50px; height: 50px; object-fit: contain; background: #0a0f24; border-radius: 8px;">
+                            <div class="flex-fill">
+                                <small style="color: #eef3ff;">{{ item.product.name[:30] }}...</small>
+                                <small style="color: #8895c9; display: block;">{{ item.quantity }} шт. x {{ "%.0f"|format(item.product.price) }} ₽</small>
+                            </div>
+                            <span style="color: #8bb5ff; font-weight: 600;">{{ "%.0f"|format(item.product.price * item.quantity) }} ₽</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <hr style="border-color: var(--border);">
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="color: #8895c9;">Товары</span>
+                        <span style="color: #eef3ff;">{{ "%.0f"|format(total) }} ₽</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="color: #8895c9;">Доставка</span>
+                        <span id="delivery-price" style="color: #eef3ff;">350 ₽</span>
+                    </div>
+                    <hr style="border-color: var(--border);">
+                    <div class="d-flex justify-content-between">
+                        <span style="color: #eef3ff; font-weight: 600; font-size: 1.1rem;">Итого к оплате</span>
+                        <span id="total-payment" style="color: #8bb5ff; font-weight: 700; font-size: 1.3rem;">{{ "%.0f"|format(total + 350) }} ₽</span>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 mt-4" 
+                            style="background: var(--accent-gradient); border: none; padding: 15px; font-weight: 600; font-size: 1.1rem; border-radius: 12px;"
+                            onclick="processPayment()">
+                        <i class="bi bi-shield-lock me-2"></i>Оплатить заказ
+                    </button>
+                    
+                    <p class="text-center mt-3" style="color: #8895c9; font-size: 0.8rem;">
+                        <i class="bi bi-lock me-1"></i>Безопасная оплата. SSL шифрование
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.checkout-input {
+    background: var(--bg-input) !important;
+    border: 1px solid var(--border-hover) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    padding: 12px 15px !important;
+}
+.checkout-input:focus {
+    border-color: #5b8def !important;
+    box-shadow: 0 0 10px rgba(91,141,239,0.2) !important;
+}
+.delivery-option:hover, .payment-option:hover {
+    border-color: #5b8def !important;
+    background: rgba(91,141,239,0.05) !important;
+}
+</style>
+
+<script>
+// Переключение опций доставки
+document.querySelectorAll('.delivery-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+        document.querySelectorAll('.delivery-option').forEach(o => {
+            o.classList.remove('active');
+            o.style.border = '2px solid var(--border-hover)';
+            o.style.background = 'rgba(255,255,255,0.02)';
+        });
+        this.classList.add('active');
+        this.style.border = '2px solid #5b8def';
+        this.style.background = 'rgba(91,141,239,0.1)';
+        this.querySelector('input').checked = true;
+        
+        const deliveryPrice = this.querySelector('input').value === 'pickup' ? 0 : 350;
+        document.getElementById('delivery-price').textContent = deliveryPrice === 0 ? 'Бесплатно' : '350 ₽';
+        
+        const total = {{ total }} + deliveryPrice;
+        document.getElementById('total-payment').textContent = total.toLocaleString() + ' ₽';
+        
+        document.getElementById('address-field').style.display = this.querySelector('input').value === 'pickup' ? 'none' : 'block';
+    });
+});
+
+// Переключение опций оплаты
+document.querySelectorAll('.payment-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+        document.querySelectorAll('.payment-option').forEach(o => {
+            o.classList.remove('active');
+            o.style.border = '2px solid var(--border-hover)';
+        });
+        this.classList.add('active');
+        this.style.border = '2px solid #5b8def';
+        this.querySelector('input').checked = true;
+    });
+});
+
+function processPayment() {
+    alert('✅ Заказ успешно оформлен! Спасибо за покупку!\n\nНомер заказа: #' + Math.floor(Math.random() * 1000000));
+    window.location.href = '/';
+}
+</script>
+{% endblock %}

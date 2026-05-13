@@ -1,0 +1,453 @@
+<!-- catalog.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="catalog-container">
+    <!-- Боковая панель с категориями -->
+    <aside class="catalog-sidebar">
+        <h5 class="sidebar-title">
+            <i class="bi bi-grid-fill me-2"></i>Каталог товаров
+        </h5>
+        <nav class="category-nav">
+            <!-- Бытовая техника -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-house-gear me-2"></i>Бытовая техника
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <div class="subcategory-section">
+                        <span class="subcategory-title">Встраиваемая техника</span>
+                        <a href="{{ url_for('catalog', category='Варочные панели') }}" class="subcategory-link">Варочные панели</a>
+                        <a href="{{ url_for('catalog', category='Духовые шкафы') }}" class="subcategory-link">Духовые шкафы</a>
+                        <a href="{{ url_for('catalog', category='Вытяжки') }}" class="subcategory-link">Вытяжки</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые микроволновые печи') }}" class="subcategory-link">Встраиваемые микроволновые печи</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые холодильники') }}" class="subcategory-link">Встраиваемые холодильники</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые морозильные шкафы') }}" class="subcategory-link">Встраиваемые морозильные шкафы</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые посудомоечные машины') }}" class="subcategory-link">Встраиваемые посудомоечные машины</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые стиральные машины') }}" class="subcategory-link">Встраиваемые стиральные машины</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые стирально-сушильные машины') }}" class="subcategory-link">Встраиваемые стирально-сушильные машины</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые винные шкафы') }}" class="subcategory-link">Встраиваемые винные шкафы</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые кофемашины') }}" class="subcategory-link">Встраиваемые кофемашины</a>
+                        <a href="{{ url_for('catalog', category='Встраиваемые подогреватели для посуды') }}" class="subcategory-link">Встраиваемые подогреватели для посуды</a>
+                        <a href="{{ url_for('catalog', category='Чистящие средства для кухни') }}" class="subcategory-link">Чистящие средства для кухни</a>
+                    </div>
+                    <div class="subcategory-section">
+                        <span class="subcategory-title">Техника для кухни</span>
+                        <a href="{{ url_for('catalog', category='Плиты, СВЧ и печи') }}" class="subcategory-link">Плиты, СВЧ и печи</a>
+                        <a href="{{ url_for('catalog', category='Холодильное оборудование') }}" class="subcategory-link">Холодильное оборудование</a>
+                        <a href="{{ url_for('catalog', category='Посудомоечные машины') }}" class="subcategory-link">Посудомоечные машины</a>
+                        <a href="{{ url_for('catalog', category='Приготовление напитков') }}" class="subcategory-link">Приготовление напитков</a>
+                        <a href="{{ url_for('catalog', category='Электрочайники и термопоты') }}" class="subcategory-link">Электрочайники и термопоты</a>
+                        <a href="{{ url_for('catalog', category='Фильтрация воды') }}" class="subcategory-link">Фильтрация воды</a>
+                        <a href="{{ url_for('catalog', category='Нарезка и смешивание') }}" class="subcategory-link">Нарезка и смешивание</a>
+                        <a href="{{ url_for('catalog', category='Грили, аэрогрили, вафельницы, шашлычницы') }}" class="subcategory-link">Грили, аэрогрили, вафельницы, шашлычницы</a>
+                        <a href="{{ url_for('catalog', category='Фритюрницы и тостеры') }}" class="subcategory-link">Фритюрницы и тостеры</a>
+                        <a href="{{ url_for('catalog', category='Мультиварки и техника для варки') }}" class="subcategory-link">Мультиварки и техника для варки</a>
+                        <a href="{{ url_for('catalog', category='Приготовление десертов') }}" class="subcategory-link">Приготовление десертов</a>
+                        <a href="{{ url_for('catalog', category='Вакуумная упаковка') }}" class="subcategory-link">Вакуумная упаковка</a>
+                        <a href="{{ url_for('catalog', category='Измерения') }}" class="subcategory-link">Измерения</a>
+                        <a href="{{ url_for('catalog', category='Измельчение пищевых отходов') }}" class="subcategory-link">Измельчение пищевых отходов</a>
+                        <a href="{{ url_for('catalog', category='Домашние заготовки') }}" class="subcategory-link">Домашние заготовки</a>
+                        <a href="{{ url_for('catalog', category='Супницы и мармиты') }}" class="subcategory-link">Супницы и мармиты</a>
+                        <a href="{{ url_for('catalog', category='Сушка овощей и фруктов') }}" class="subcategory-link">Сушка овощей и фруктов</a>
+                        <a href="{{ url_for('catalog', category='Прочая техника для кухни') }}" class="subcategory-link">Прочая техника для кухни</a>
+                        <a href="{{ url_for('catalog', category='Посуда и кухонные предметы') }}" class="subcategory-link">Посуда и кухонные предметы</a>
+                    </div>
+                    <div class="subcategory-section">
+                        <span class="subcategory-title">Техника для дома</span>
+                        <a href="{{ url_for('catalog', category='Стирка и сушка') }}" class="subcategory-link">Стирка и сушка</a>
+                        <a href="{{ url_for('catalog', category='Глаженье') }}" class="subcategory-link">Глаженье</a>
+                        <a href="{{ url_for('catalog', category='Уборка') }}" class="subcategory-link">Уборка</a>
+                        <a href="{{ url_for('catalog', category='Водонагреватели и котлы отопления') }}" class="subcategory-link">Водонагреватели и котлы отопления</a>
+                        <a href="{{ url_for('catalog', category='Летний климат') }}" class="subcategory-link">Летний климат</a>
+                        <a href="{{ url_for('catalog', category='Зимний климат') }}" class="subcategory-link">Зимний климат</a>
+                        <a href="{{ url_for('catalog', category='Управление климатом и обработка воздуха') }}" class="subcategory-link">Управление климатом и обработка воздуха</a>
+                        <a href="{{ url_for('catalog', category='Умная техника') }}" class="subcategory-link">Умная техника</a>
+                        <a href="{{ url_for('catalog', category='Шитье, вышивание и уход за одеждой') }}" class="subcategory-link">Шитье, вышивание и уход за одеждой</a>
+                        <a href="{{ url_for('catalog', category='Часы') }}" class="subcategory-link">Часы</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Красота и здоровье -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-heart-pulse me-2"></i>Красота и здоровье
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Укладка и сушка волос') }}" class="subcategory-link">Укладка и сушка волос</a>
+                    <a href="{{ url_for('catalog', category='Бритье, стрижка и эпиляция') }}" class="subcategory-link">Бритье, стрижка и эпиляция</a>
+                    <a href="{{ url_for('catalog', category='Уход за полостью рта') }}" class="subcategory-link">Уход за полостью рта</a>
+                    <a href="{{ url_for('catalog', category='Уход за телом') }}" class="subcategory-link">Уход за телом</a>
+                </div>
+            </div>
+
+            <!-- Смартфоны и фототехника -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-phone me-2"></i>Смартфоны и фототехника
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Смартфоны и гаджеты') }}" class="subcategory-link">Смартфоны и гаджеты</a>
+                    <a href="{{ url_for('catalog', category='Планшеты, электронные книги') }}" class="subcategory-link">Планшеты, электронные книги</a>
+                    <a href="{{ url_for('catalog', category='Фототехника') }}" class="subcategory-link">Фототехника</a>
+                </div>
+            </div>
+
+            <!-- ТВ, консоли и аудио -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-tv me-2"></i>ТВ, консоли и аудио
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Телевизоры и аксессуары') }}" class="subcategory-link">Телевизоры и аксессуары</a>
+                    <a href="{{ url_for('catalog', category='Консоли и видеоигры') }}" class="subcategory-link">Консоли и видеоигры</a>
+                    <a href="{{ url_for('catalog', category='Аудиотехника') }}" class="subcategory-link">Аудиотехника</a>
+                </div>
+            </div>
+
+            <!-- ПК, ноутбуки, периферия -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-laptop me-2"></i>ПК, ноутбуки, периферия
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Ноутбуки и аксессуары') }}" class="subcategory-link">Ноутбуки и аксессуары</a>
+                    <a href="{{ url_for('catalog', category='Компьютеры и ПО') }}" class="subcategory-link">Компьютеры и ПО</a>
+                    <a href="{{ url_for('catalog', category='Периферия и аксессуары') }}" class="subcategory-link">Периферия и аксессуары</a>
+                </div>
+            </div>
+
+            <!-- Комплектующие для ПК -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-cpu me-2"></i>Комплектующие для ПК
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Процессоры') }}" class="subcategory-link">Процессоры</a>
+                    <a href="{{ url_for('catalog', category='Видеокарты') }}" class="subcategory-link">Видеокарты</a>
+                    <a href="{{ url_for('catalog', category='Материнские платы') }}" class="subcategory-link">Материнские платы</a>
+                    <a href="{{ url_for('catalog', category='Оперативная память') }}" class="subcategory-link">Оперативная память</a>
+                </div>
+            </div>
+
+            <!-- Офис и мебель -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-building me-2"></i>Офис и мебель
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Техника для печати') }}" class="subcategory-link">Техника для печати</a>
+                    <a href="{{ url_for('catalog', category='Расходные материалы и постпечатное оборудование') }}" class="subcategory-link">Расходные материалы</a>
+                    <a href="{{ url_for('catalog', category='Товары для презентаций и мебель') }}" class="subcategory-link">Презентации и мебель</a>
+                    <a href="{{ url_for('catalog', category='Торговое оборудование и связь') }}" class="subcategory-link">Торговое оборудование</a>
+                </div>
+            </div>
+
+            <!-- Сетевое оборудование -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-router me-2"></i>Сетевое оборудование
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Wi-Fi роутеры и оборудование') }}" class="subcategory-link">Wi-Fi роутеры и оборудование</a>
+                    <a href="{{ url_for('catalog', category='Видеонаблюдение') }}" class="subcategory-link">Видеонаблюдение</a>
+                    <a href="{{ url_for('catalog', category='Профессиональное сетевое оборудование') }}" class="subcategory-link">Профессиональное сетевое оборудование</a>
+                    <a href="{{ url_for('catalog', category='Защита и элементы питания') }}" class="subcategory-link">Защита и элементы питания</a>
+                </div>
+            </div>
+
+            <!-- Отдых и развлечения -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-controller me-2"></i>Отдых и развлечения
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Портативные транспортные средства') }}" class="subcategory-link">Портативный транспорт</a>
+                    <a href="{{ url_for('catalog', category='Развлечения и хобби') }}" class="subcategory-link">Развлечения и хобби</a>
+                    <a href="{{ url_for('catalog', category='Активный отдых и туризм') }}" class="subcategory-link">Активный отдых и туризм</a>
+                </div>
+            </div>
+
+            <!-- Инструмент и стройка -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-tools me-2"></i>Инструмент и стройка
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Аккумуляторные инструменты') }}" class="subcategory-link">Аккумуляторные инструменты</a>
+                    <a href="{{ url_for('catalog', category='Электроинструменты') }}" class="subcategory-link">Электроинструменты</a>
+                    <a href="{{ url_for('catalog', category='Строительное оборудование') }}" class="subcategory-link">Строительное оборудование</a>
+                    <a href="{{ url_for('catalog', category='Ручной инструмент') }}" class="subcategory-link">Ручной инструмент</a>
+                </div>
+            </div>
+
+            <!-- Садовая техника -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-tree me-2"></i>Садовая техника
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Техника для сада') }}" class="subcategory-link">Техника для сада</a>
+                    <a href="{{ url_for('catalog', category='Аккумуляторная садовая техника') }}" class="subcategory-link">Аккумуляторная садовая техника</a>
+                    <a href="{{ url_for('catalog', category='Бензоинструмент') }}" class="subcategory-link">Бензоинструмент</a>
+                    <a href="{{ url_for('catalog', category='Водоснабжение и отопление') }}" class="subcategory-link">Водоснабжение и отопление</a>
+                </div>
+            </div>
+
+            <!-- Дом, декор и посуда -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-house-heart me-2"></i>Дом, декор и посуда
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Посуда и кухонные предметы') }}" class="subcategory-link">Посуда и кухонные предметы</a>
+                    <a href="{{ url_for('catalog', category='Освещение и аксессуары') }}" class="subcategory-link">Освещение и аксессуары</a>
+                    <a href="{{ url_for('catalog', category='Хозтовары, сантехника и декор') }}" class="subcategory-link">Хозтовары и сантехника</a>
+                </div>
+            </div>
+
+            <!-- Умный дом -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-house-gear me-2"></i>Умный дом
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Умная техника') }}" class="subcategory-link">Умная техника</a>
+                    <a href="{{ url_for('catalog', category='Экосистемы умного дома') }}" class="subcategory-link">Экосистемы умного дома</a>
+                    <a href="{{ url_for('catalog', category='Управление сценариями') }}" class="subcategory-link">Управление сценариями</a>
+                </div>
+            </div>
+
+            <!-- Автотовары -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-car-front me-2"></i>Автотовары
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Автоэлектроника') }}" class="subcategory-link">Автоэлектроника</a>
+                    <a href="{{ url_for('catalog', category='Автозвук') }}" class="subcategory-link">Автозвук</a>
+                    <a href="{{ url_for('catalog', category='Аксессуары авто') }}" class="subcategory-link">Аксессуары</a>
+                    <a href="{{ url_for('catalog', category='Автоинструмент') }}" class="subcategory-link">Автоинструмент</a>
+                </div>
+            </div>
+
+            <!-- Аксессуары и услуги -->
+            <div class="category-item">
+                <button class="category-btn" onclick="toggleSubcategory(this)">
+                    <i class="bi bi-headphones me-2"></i>Аксессуары и услуги
+                    <i class="bi bi-chevron-down ms-auto arrow-icon"></i>
+                </button>
+                <div class="subcategory-list">
+                    <a href="{{ url_for('catalog', category='Для мобильных устройств') }}" class="subcategory-link">Для мобильных устройств</a>
+                    <a href="{{ url_for('catalog', category='Для компьютеров и ноутбуков') }}" class="subcategory-link">Для компьютеров и ноутбуков</a>
+                    <a href="{{ url_for('catalog', category='Для бытовой техники') }}" class="subcategory-link">Для бытовой техники</a>
+                    <a href="{{ url_for('catalog', category='Услуги') }}" class="subcategory-link">Услуги</a>
+                </div>
+            </div>
+
+            <!-- Распродажа -->
+            <div class="category-item sale-item">
+                <a href="{{ url_for('catalog', sale='true') }}" class="category-btn sale-btn">
+                    <i class="bi bi-percent me-2"></i>Распродажа
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Основной контент каталога -->
+    <div class="catalog-content">
+        {% if request.args.get('category') %}
+            <h3 style="color:#eef3ff; margin-bottom: 20px;">{{ request.args.get('category') }}</h3>
+        {% elif request.args.get('query') %}
+            <h3 style="color:#eef3ff; margin-bottom: 20px;">Результаты поиска: "{{ request.args.get('query') }}"</h3>
+        {% else %}
+            <h3 style="color:#eef3ff; margin-bottom: 20px;">Все товары</h3>
+        {% endif %}
+        
+        <div class="row row-cols-2 row-cols-md-4 g-3">
+            {% for p in products %}
+                {% include 'product_card.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.catalog-container {
+    display: flex;
+    gap: 20px;
+}
+
+.catalog-sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-hover);
+    border-radius: 16px;
+    padding: 20px 0;
+    height: fit-content;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-title {
+    color: #eef3ff;
+    padding: 0 20px 15px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.category-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-item {
+    border-bottom: 1px solid rgba(30, 42, 74, 0.5);
+}
+
+.category-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    text-decoration: none;
+}
+
+.category-btn:hover {
+    background: rgba(42, 75, 179, 0.15);
+    color: #fff;
+}
+
+.category-btn .arrow-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.category-btn.active .arrow-icon {
+    transform: rotate(180deg);
+}
+
+.subcategory-list {
+    display: none;
+    background: rgba(16, 21, 46, 0.8);
+    padding: 5px 0;
+}
+
+.subcategory-list.show {
+    display: block;
+}
+
+.subcategory-section {
+    padding: 5px 0;
+}
+
+.subcategory-title {
+    display: block;
+    padding: 8px 20px;
+    color: #5b8def;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.subcategory-link {
+    display: block;
+    padding: 6px 20px 6px 35px;
+    color: #8895c9;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.subcategory-link:hover {
+    background: rgba(91, 141, 239, 0.1);
+    color: #fff;
+}
+
+.sale-item {
+    margin-top: 5px;
+}
+
+.sale-btn {
+    color: #ff4d6d !important;
+    font-weight: 600;
+}
+
+.sale-btn:hover {
+    background: rgba(255, 77, 109, 0.15) !important;
+}
+
+.catalog-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Стилизация скроллбара */
+.catalog-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.catalog-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.catalog-sidebar::-webkit-scrollbar-thumb {
+    background: #2a3870;
+    border-radius: 4px;
+}
+
+.catalog-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #5b8def;
+}
+
+@media (max-width: 768px) {
+    .catalog-container {
+        flex-direction: column;
+    }
+    
+    .catalog-sidebar {
+        width: 100%;
+        min-width: 100%;
+        position: static;
+        max-height: none;
+    }
+}
+</style>
+
+<script>
+function toggleSubcategory(btn) {
+    btn.classList.toggle('active');
+    const subList = btn.nextElementSibling;
+    subList.classList.toggle('show');
+}
+</script>
+
+{% endblock %}

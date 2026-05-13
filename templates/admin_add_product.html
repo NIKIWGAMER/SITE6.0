@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 30px;">
+            <h3 style="color: #eef3ff; margin-bottom: 25px;">
+                <i class="bi bi-plus-circle me-2" style="color: #2ecc71;"></i>Добавить новый товар
+            </h3>
+            
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Название товара *</label>
+                        <input type="text" name="name" class="form-control" required placeholder="Введите название">
+                    </div>
+                    <!-- КАТЕГОРИЯ С АВТОДОПОЛНЕНИЕМ -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Категория *</label>
+                        <div style="position: relative;">
+                            <input type="text" name="category" id="category-input" class="form-control" 
+                                   required placeholder="Начните вводить категорию..."
+                                   autocomplete="off"
+                                   oninput="filterCategories(this.value)"
+                                   onfocus="filterCategories(this.value)"
+                                   style="background: var(--bg-input); border: 1px solid var(--border-hover); color: #fff; border-radius: 10px; padding: 10px 15px;">
+                            <div id="category-suggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; background: #1a1f3a; border: 1px solid #5b8def; border-radius: 0 0 10px 10px; max-height: 250px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Бренд</label>
+                        <input type="text" name="brand" class="form-control" placeholder="Например: Samsung">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Модель</label>
+                        <input type="text" name="model" class="form-control" placeholder="Например: Galaxy S24">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Рейтинг (0-5)</label>
+                        <input type="number" name="rating" class="form-control" value="0" step="0.1" min="0" max="5">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Цена (₽) *</label>
+                        <input type="number" name="price" class="form-control" required step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Старая цена (₽)</label>
+                        <input type="number" name="old_price" class="form-control" step="0.01" min="0" placeholder="Не обязательно">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Количество на складе</label>
+                        <input type="number" name="stock" class="form-control" value="10" min="0">
+                    </div>
+                </div>
+                
+                <!-- Изображение -->
+                <div class="mb-3">
+                    <label class="form-label">Изображение товара</label>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small" style="color: #8895c9;">Загрузить файл:</label>
+                            <input type="file" name="image_file" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small" style="color: #8895c9;">Или указать URL:</label>
+                            <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Описание -->
+                <div class="mb-3">
+                    <label class="form-label">Описание товара</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Подробное описание товара..."></textarea>
+                </div>
+                
+                <!-- Характеристики -->
+                <div class="mb-3">
+                    <label class="form-label d-flex justify-content-between align-items-center">
+                        <span>Характеристики</span>
+                        <button type="button" class="btn btn-sm btn-outline-info" onclick="addSpecRow()">
+                            <i class="bi bi-plus-lg"></i> Добавить
+                        </button>
+                    </label>
+                    <div id="specs-container">
+                        <div class="row mb-2 spec-row">
+                            <div class="col-md-5">
+                                <input type="text" name="spec_name[]" class="form-control" placeholder="Характеристика (например: Экран)">
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" name="spec_value[]" class="form-control" placeholder="Значение (например: 6.7 дюймов)">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="this.closest('.spec-row').remove()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Доп. поля для совместимости ПК -->
+                <div class="row mt-3">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Сокет</label>
+                        <input type="text" name="socket" class="form-control" placeholder="LGA 1700, AM5...">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Форм-фактор</label>
+                        <input type="text" name="form_factor" class="form-control" placeholder="ATX, Micro-ATX...">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Тип памяти</label>
+                        <input type="text" name="ram_type" class="form-control" placeholder="DDR4, DDR5...">
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success" style="background: #2ecc71; border: none; padding: 12px 30px; font-weight: 600; border-radius: 25px;">
+                        <i class="bi bi-check-lg me-2"></i>Добавить товар
+                    </button>
+                    <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-light" style="border-radius: 25px; padding: 12px 30px;">
+                        <i class="bi bi-arrow-left me-2"></i>Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const allCategories = [
+    'Смартфоны', 'Ноутбуки', 'Планшеты', 'Мониторы', 'Видеокарты', 'Процессоры',
+    'Материнские платы', 'Оперативная память', 'Наушники', 'Игровые консоли', 'Умные часы',
+    'Телевизоры', 'Клавиатуры', 'Игровые мыши', 'Колонки', 'Корпуса', 'Блоки питания',
+    'SSD накопители', 'Кулеры и СО', 'Портативный транспорт', 'Развлечения и хобби',
+    'Умный дом', 'Экосистемы умного дома', 'Управление сценариями', 'Автоэлектроника',
+    'Автозвук', 'Зарядные станции', 'Аксессуары для смартфонов', 'Сетевое оборудование',
+    'Бытовая техника', 'Садовый инструмент', 'Портативные колонки'
+];
+
+function filterCategories(value) {
+    const container = document.getElementById('category-suggestions');
+    if (!value || value.length < 1) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    const filtered = allCategories.filter(c => c.toLowerCase().includes(value.toLowerCase()));
+    if (filtered.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.innerHTML = filtered.map(c => 
+        `<div style="padding: 10px 15px; cursor: pointer; color: #eef3ff; border-bottom: 1px solid rgba(91,141,239,0.1); transition: all 0.2s;" 
+              onmouseenter="this.style.background='rgba(91,141,239,0.2)'" 
+              onmouseleave="this.style.background='transparent'"
+              onmousedown="event.preventDefault(); selectCategory('${c}')">${c}</div>`
+    ).join('');
+    container.style.display = 'block';
+}
+
+function selectCategory(category) {
+    document.getElementById('category-input').value = category;
+    document.getElementById('category-suggestions').style.display = 'none';
+}
+
+// Клик вне списка закрывает
+document.addEventListener('mousedown', function(e) {
+    const container = document.getElementById('category-suggestions');
+    const input = document.getElementById('category-input');
+    if (container && input && !input.contains(e.target) && !container.contains(e.target)) {
+        container.style.display = 'none';
+    }
+});
+
+function addSpecRow() {
+    const container = document.getElementById('specs-container');
+    const row = document.createElement('div');
+    row.className = 'row mb-2 spec-row';
+    row.innerHTML = `
+        <div class="col-md-5">
+            <input type="text" name="spec_name[]" class="form-control" placeholder="Характеристика">
+        </div>
+        <div class="col-md-5">
+            <input type="text" name="spec_value[]" class="form-control" placeholder="Значение">
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="this.closest('.spec-row').remove()">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(row);
+}
+</script>
+{% endblock %}

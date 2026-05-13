@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 20px; padding: 30px;">
+            <h2 style="color: #eef3ff; font-weight: 700; margin-bottom: 10px;">
+                <i class="bi bi-tools me-2" style="color: #ff4d6d;"></i>Заказать ремонт
+            </h2>
+            <p style="color: #8895c9; margin-bottom: 25px;">Опишите проблему — мы свяжемся с вами в течение часа</p>
+            
+            <form method="POST" action="{{ url_for('submit_repair') }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Ваше имя *</label>
+                        <input type="text" name="client_name" class="form-control" required 
+                               value="{{ current_user.username if current_user.is_authenticated else '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Телефон *</label>
+                        <input type="tel" name="phone" class="form-control" required placeholder="+7 (___) ___-__-__">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Тип устройства *</label>
+                        <select name="device_type" class="form-control" required>
+                            <option value="">— Выберите —</option>
+                            <option>Смартфон</option>
+                            <option>Ноутбук</option>
+                            <option>Планшет</option>
+                            <option>ПК / Системный блок</option>
+                            <option>Монитор</option>
+                            <option>Телевизор</option>
+                            <option>Игровая консоль</option>
+                            <option>Другое</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Модель устройства *</label>
+                        <input type="text" name="device_model" class="form-control" required placeholder="Например: iPhone 15 Pro Max">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label class="form-label" style="color: #8895c9;">Описание проблемы *</label>
+                        <textarea name="problem_description" class="form-control" rows="4" required 
+                                  placeholder="Опишите что случилось: не включается, разбит экран, не заряжается, греется, шумит..."></textarea>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Желаемый способ связи</label>
+                        <select name="contact_method" class="form-control">
+                            <option>Звонок</option>
+                            <option>WhatsApp</option>
+                            <option>Telegram</option>
+                            <option>Email</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #8895c9;">Удобное время для звонка</label>
+                        <select name="call_time" class="form-control">
+                            <option>В любое время</option>
+                            <option>Утром (9-12)</option>
+                            <option>Днём (12-17)</option>
+                            <option>Вечером (17-21)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <hr style="border-color: var(--border); margin: 25px 0;">
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger flex-fill" 
+                            style="background: var(--danger); border: none; padding: 14px; font-weight: 600; border-radius: 12px; font-size: 1.1rem;">
+                        <i class="bi bi-send me-2"></i>Отправить заявку
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-light" style="border-radius: 12px; padding: 14px 20px;">
+                        Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

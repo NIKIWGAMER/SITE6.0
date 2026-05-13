@@ -1,0 +1,203 @@
+% extends 'base.html' %}
+{% block content %}
+<style>
+.admin-dashboard {
+    min-height: 80vh;
+}
+.sidebar-admin {
+    background: var(--bg-card);
+    border: 1px solid var(--border-hover);
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+}
+.sidebar-admin .nav-link {
+    color: #8895c9;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(30,42,74,0.3);
+    transition: all 0.3s;
+    font-weight: 500;
+}
+.sidebar-admin .nav-link:hover, .sidebar-admin .nav-link.active {
+    background: rgba(91,141,239,0.1);
+    color: #fff;
+}
+.sidebar-admin .nav-link i {
+    width: 24px;
+    margin-right: 10px;
+}
+.stat-card-mini {
+    background: var(--bg-card);
+    border: 1px solid var(--border-hover);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.stat-card-mini:hover {
+    border-color: #5b8def;
+    transform: translateY(-2px);
+}
+</style>
+
+<div class="admin-dashboard">
+    <div class="row">
+        <!-- Боковое меню -->
+        <div class="col-lg-3 mb-4">
+            <div class="sidebar-admin sticky-top" style="top: 20px;">
+                <div class="p-4 text-center" style="background: var(--accent-gradient);">
+                    <i class="bi bi-shield-lock-fill fs-1 text-white"></i>
+                    <h5 class="text-white mt-2 mb-0">Комната управления</h5>
+                    <small class="text-white-50">{{ current_user.username }}</small>
+                </div>
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="#dashboard" onclick="showSection('dashboard')">
+                        <i class="bi bi-speedometer2"></i> Дашборд
+                    </a>
+                    <a class="nav-link" href="#products" onclick="showSection('products')">
+                        <i class="bi bi-box-seam"></i> Товары
+                    </a>
+                    <a class="nav-link" href="#add-product" onclick="showSection('add-product')">
+                        <i class="bi bi-plus-circle"></i> Добавить товар
+                    </a>
+                    <a class="nav-link" href="#repairs" onclick="showSection('repairs')">
+                        <i class="bi bi-tools"></i> Заявки на ремонт 
+                        {% if repair_count %}<span class="badge bg-danger ms-auto">{{ repair_count }}</span>{% endif %}
+                    </a>
+                    <a class="nav-link" href="{{ url_for('index') }}" target="_blank">
+                        <i class="bi bi-eye"></i> Проверить сайт
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Контент -->
+        <div class="col-lg-9">
+            <!-- ДАШБОРД -->
+            <div id="section-dashboard">
+                <h3 style="color: #eef3ff; margin-bottom: 20px;">
+                    <i class="bi bi-speedometer2 me-2" style="color: #5b8def;"></i>Дашборд
+                </h3>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card-mini">
+                            <i class="bi bi-box-seam fs-1" style="color: #5b8def;"></i>
+                            <h2 class="text-white mt-2">{{ total_products }}</h2>
+                            <small style="color: #8895c9;">Товаров</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card-mini">
+                            <i class="bi bi-folder fs-1" style="color: #f39c12;"></i>
+                            <h2 class="text-white mt-2">{{ total_categories }}</h2>
+                            <small style="color: #8895c9;">Категорий</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card-mini">
+                            <i class="bi bi-tools fs-1" style="color: #ff4d6d;"></i>
+                            <h2 class="text-white mt-2">{{ repair_count }}</h2>
+                            <small style="color: #8895c9;">Заявок</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card-mini">
+                            <i class="bi bi-star fs-1" style="color: #ffc107;"></i>
+                            <h2 class="text-white mt-2">{{ "%.1f"|format(avg_rating) }}</h2>
+                            <small style="color: #8895c9;">Ср. рейтинг</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Последние заявки -->
+                {% if repair_orders %}
+                <h5 style="color: #eef3ff; margin-bottom: 15px;">📋 Последние заявки на ремонт</h5>
+                <div class="row g-2">
+                    {% for order in repair_orders[:4] %}
+                    <div class="col-md-6">
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 10px; padding: 12px;">
+                            <small style="color: #ff4d6d;">{{ order.status }}</small>
+                            <p class="mb-1" style="color: #eef3ff;">{{ order.client_name }} — {{ order.device_type }}</p>
+                            <small style="color: #8895c9;">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- ТОВАРЫ -->
+            <div id="section-products" style="display:none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 style="color: #eef3ff;"><i class="bi bi-box-seam me-2" style="color: #5b8def;"></i>Товары</h3>
+                    <a href="{{ url_for('admin_add_product') }}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-lg"></i> Добавить
+                    </a>
+                </div>
+                <input type="text" class="form-control mb-3" placeholder="🔍 Поиск товара..." 
+                       oninput="filterProductTable(this.value)" style="border-radius: 25px;">
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover" id="product-table">
+                        <thead>
+                            <tr><th>ID</th><th>Название</th><th>Категория</th><th>Цена</th><th>Действия</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for p in products %}
+                            <tr>
+                                <td>#{{ p.id }}</td>
+                                <td>{{ p.name[:30] }}...</td>
+                                <td><span class="badge" style="background: var(--accent);">{{ p.category }}</span></td>
+                                <td style="color: #8bb5ff;">{{ "%.0f"|format(p.price) }} ₽</td>
+                                <td>
+                                    <a href="{{ url_for('admin_edit_product', product_id=p.id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-pencil"></i></a>
+                                    <a href="{{ url_for('admin_delete_product', product_id=p.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить?')"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ЗАЯВКИ НА РЕМОНТ -->
+            <div id="section-repairs" style="display:none;">
+                <h3 style="color: #eef3ff;"><i class="bi bi-tools me-2" style="color: #ff4d6d;"></i>Заявки на ремонт</h3>
+                <div class="row g-3 mt-2">
+                    {% for order in repair_orders %}
+                    <div class="col-md-6">
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 12px; padding: 15px;">
+                            <span class="badge" style="background: #ff4d6d;">{{ order.status }}</span>
+                            <h6 class="mt-2" style="color: #eef3ff;">{{ order.client_name }} — {{ order.phone }}</h6>
+                            <p style="color: #8895c9;">📱 {{ order.device_type }}: {{ order.device_model }}</p>
+                            <p style="color: #eef3ff;">📝 {{ order.problem_description[:80] }}...</p>
+                            <small style="color: #8895c9;">{{ order.contact_method }}, {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p style="color: #8895c9;">Заявок пока нет</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showSection(section) {
+    document.querySelectorAll('[id^="section-"]').forEach(el => el.style.display = 'none');
+    document.getElementById('section-' + section).style.display = 'block';
+    
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelector(`[href="#${section}"]`)?.classList.add('active');
+}
+
+function filterProductTable(query) {
+    const rows = document.querySelectorAll('#product-table tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

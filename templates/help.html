@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="help-page">
+    <h2 class="mb-4" style="color: #eef3ff; font-weight: 700;">❓ Помощь и FAQ</h2>
+    
+    <!-- Поиск по вопросам -->
+    <div class="search-help mb-5">
+        <div class="card bg-card p-4" style="border: 1px solid var(--border-hover);">
+            <h5 class="text-white mb-3">🔍 Поиск по вопросам</h5>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Введите ваш вопрос..." style="border-radius: 25px 0 0 25px;">
+                <button class="btn btn-primary" style="border-radius: 0 25px 25px 0; background: var(--accent); border: none;">
+                    <i class="bi bi-search"></i> Найти
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Популярные вопросы -->
+    <section class="mb-5">
+        <h4 class="mb-3" style="color: #eef3ff;">📋 Популярные вопросы</h4>
+        <div class="accordion" id="faqAccordion">
+            {% set faqs = [
+                {
+                    'id': 'one',
+                    'question': 'Как оформить заказ?',
+                    'answer': 'Выберите товар в каталоге, добавьте его в корзину и перейдите к оформлению. Укажите адрес доставки, выберите способ оплаты и подтвердите заказ. После оформления вы получите SMS/email с номером заказа.'
+                },
+                {
+                    'id': 'two',
+                    'question': 'Какие способы оплаты доступны?',
+                    'answer': 'Мы принимаем: банковские карты Visa/Mastercard/Мир, электронные кошельки (Яндекс.Деньги, Qiwi), оплату через СБП, наличными при самовывозе, а также кредит и рассрочку от наших банков-партнеров.'
+                },
+                {
+                    'id': 'three',
+                    'question': 'Как отследить статус заказа?',
+                    'answer': 'Войдите в личный кабинет и перейдите в раздел "Мои заказы". Там отображается текущий статус: обработка, сборка, доставка, выполнен. Также мы отправляем уведомления по SMS и email на каждом этапе.'
+                },
+                {
+                    'id': 'four',
+                    'question': 'Какие сроки доставки?',
+                    'answer': 'По Москве и СПб: 1-2 дня. В крупные города: 3-5 дней. В отдаленные регионы: до 14 дней. Экспресс-доставка доступна в 50+ городов (1 день). Точные сроки рассчитываются при оформлении заказа.'
+                },
+                {
+                    'id': 'five',
+                    'question': 'Как обменять или вернуть товар?',
+                    'answer': 'Вы можете вернуть товар в течение 14 дней с момента получения (для интернет-заказов). Товар должен сохранить товарный вид и упаковку. Обратитесь в службу поддержки или оформите заявку в личном кабинете.'
+                },
+                {
+                    'id': 'six',
+                    'question': 'Где находятся сервисные центры?',
+                    'answer': 'У нас более 200 авторизованных сервисных центров по всей России. Ближайший можно найти на карте в разделе "Сервисные центры" или уточнить у оператора по телефону 8-800-77-07-999.'
+                },
+                {
+                    'id': 'seven',
+                    'question': 'Как работает гарантия?',
+                    'answer': 'На все товары действует гарантия производителя (от 1 до 3 лет). При возникновении неисправности обратитесь в сервисный центр с чеком. Мы также предлагаем дополнительную гарантию TechHub+ до 5 лет.'
+                },
+                {
+                    'id': 'eight',
+                    'question': 'Можно ли изменить или отменить заказ?',
+                    'answer': 'Да, если заказ еще не передан в доставку. Позвоните по номеру 8-800-77-07-999 или напишите в чат поддержки. После отправки заказа изменение состава невозможно, но можно оформить возврат после получения.'
+                }
+            ] %}
+            
+            {% for faq in faqs %}
+            <div class="accordion-item" style="background: var(--bg-card); border: 1px solid var(--border-hover); margin-bottom: 10px; border-radius: 12px;">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#collapse{{ faq.id }}" 
+                            style="background: transparent; color: #eef3ff; font-weight: 600; border-radius: 12px;">
+                        {{ faq.question }}
+                    </button>
+                </h2>
+                <div id="collapse{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body" style="color: var(--text-secondary); padding: 20px 25px;">
+                        {{ faq.answer }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Контакты поддержки -->
+    <section class="mb-5">
+        <h4 class="mb-3" style="color: #eef3ff;">📞 Связаться с нами</h4>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card bg-card p-4 text-center" style="border: 1px solid var(--border-hover);">
+                    <i class="bi bi-telephone-fill fs-1 mb-3" style="color: #5b8def;"></i>
+                    <h5 class="text-white">Телефон</h5>
+                    <p class="mb-0" style="color: #8bb5ff; font-size: 1.2rem; font-weight: 600;">8-800-77-07-999</p>
+                    <small style="color: var(--text-muted);">с 03:00 до 22:00 МСК</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-card p-4 text-center" style="border: 1px solid var(--border-hover);">
+                    <i class="bi bi-chat-dots-fill fs-1 mb-3" style="color: #2ecc71;"></i>
+                    <h5 class="text-white">Онлайн-чат</h5>
+                    <p style="color: var(--text-secondary);">Среднее время ответа: 2 минуты</p>
+                    <button class="btn btn-outline-info">Начать чат</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-card p-4 text-center" style="border: 1px solid var(--border-hover);">
+                    <i class="bi bi-envelope-fill fs-1 mb-3" style="color: #ffc107;"></i>
+                    <h5 class="text-white">Email</h5>
+                    <p class="mb-0" style="color: var(--text-secondary);">support@techhub.ru</p>
+                    <small style="color: var(--text-muted);">Ответ в течение 24 часов</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Документы -->
+    <section class="mb-5">
+        <h4 class="mb-3" style="color: #eef3ff;">📄 Документы и правила</h4>
+        <div class="row g-3">
+            {% set docs = [
+                {'name': 'Правила продаж', 'icon': 'bi-file-text-fill', 'color': '#5b8def'},
+                {'name': 'Политика обработки данных', 'icon': 'bi-shield-lock-fill', 'color': '#2ecc71'},
+                {'name': 'Правила сайта', 'icon': 'bi-journal-check', 'color': '#ffc107'},
+                {'name': 'Рекомендательные технологии', 'icon': 'bi-cpu-fill', 'color': '#ff4d6d'},
+                {'name': 'Гарантийные обязательства', 'icon': 'bi-patch-check-fill', 'color': '#8b5cf6'},
+                {'name': 'Условия доставки', 'icon': 'bi-truck', 'color': '#f97316'}
+            ] %}
+            {% for doc in docs %}
+            <div class="col-md-6">
+                <div class="card bg-card p-3" style="border: 1px solid var(--border-hover); cursor: pointer; transition: all 0.3s ease;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 45px; height: 45px; background: {{ doc.color }}20; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi {{ doc.icon }} fs-5" style="color: {{ doc.color }};"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 text-white">{{ doc.name }}</h6>
+                            <small style="color: var(--text-muted);">Читать документ →</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<style>
+    .accordion-button::after {
+        filter: invert(0.7);
+    }
+    .accordion-button:not(.collapsed) {
+        background: rgba(91, 141, 239, 0.1) !important;
+        color: #fff !important;
+    }
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(91, 141, 239, 0.25);
+    }
+</style>
+{% endblock %}

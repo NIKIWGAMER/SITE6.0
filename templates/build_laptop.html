@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pc-builder">
+    <h2 class="mb-2" style="color:#eef3ff; font-weight: 700;">
+        <i class="bi bi-laptop me-2" style="color: #2ecc71;"></i>Сборка ноутбука
+    </h2>
+    <p style="color:#8895c9; margin-bottom:25px;">Выберите ноутбук с нужными характеристиками</p>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="component-selector" style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                
+                <div class="mb-4">
+                    <label style="color: #eef3ff; font-weight: 600;">
+                        <i class="bi bi-tag me-2"></i>Название сборки
+                    </label>
+                    <input type="text" id="build-name" class="form-control" value="Мой ноутбук"
+                           style="background: var(--bg-input); border: 1px solid var(--border-hover); color: #fff; border-radius: 10px;">
+                </div>
+
+                <!-- Выбор ноутбука -->
+                <div class="component-group mb-4 p-3" style="background: rgba(46,204,113,0.05); border-radius: 12px;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div style="width: 40px; height: 40px; background: var(--success); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-laptop fs-5 text-white"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: #eef3ff;">Выберите ноутбук</h5>
+                    </div>
+                    <div class="row g-2">
+                        {% for laptop in laptops %}
+                        <div class="col-md-6">
+                            <div class="laptop-option p-3" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-hover); border-radius: 10px; cursor: pointer; transition: all 0.3s;"
+                                 onclick="selectLaptop('{{ laptop.id }}', '{{ laptop.name }}', {{ laptop.price }}, '{{ laptop.image_url }}')">
+                                <div class="d-flex gap-3">
+                                    <img src="{{ laptop.image_url }}" style="width: 60px; height: 60px; object-fit: contain; background: #0a0f24; border-radius: 8px;">
+                                    <div>
+                                        <small style="color: #eef3ff;">{{ laptop.name[:30] }}...</small>
+                                        <p class="fw-bold mb-0" style="color: #8bb5ff;">{{ "%.0f"|format(laptop.price) }} ₽</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Доп. аксессуары -->
+                <div class="component-group mb-4 p-3" style="background: rgba(142,68,173,0.05); border-radius: 12px;">
+                    <h6 style="color: #eef3ff;">Дополнительно:</h6>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="add-mouse">
+                        <label class="form-check-label" style="color: #8895c9;" for="add-mouse">Мышь (подберём автоматически)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="add-bag">
+                        <label class="form-check-label" style="color: #8895c9;" for="add-bag">Сумка для ноутбука</label>
+                    </div>
+                </div>
+
+                <button class="btn btn-success w-100" onclick="addLaptopBuild()" 
+                        style="background: var(--success); border: none; padding: 14px; font-weight: 600; border-radius: 12px;">
+                    <i class="bi bi-cart-plus me-2"></i>Добавить в корзину
+                </button>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 20px;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: 16px; padding: 25px;">
+                    <h5 style="color: #eef3ff;">📋 Ваш выбор</h5>
+                    <div id="laptop-summary" style="color: #8895c9;">Выберите ноутбук</div>
+                    <hr style="border-color: var(--border);">
+                    <div class="d-flex justify-content-between">
+                        <span style="color: #eef3ff;">Итого:</span>
+                        <span id="laptop-price" class="fw-bold" style="color: #8bb5ff; font-size: 1.3rem;">0 ₽</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedLaptop = null;
+
+function selectLaptop(id, name, price, image) {
+    document.querySelectorAll('.laptop-option').forEach(el => el.style.borderColor = 'var(--border-hover)');
+    event.currentTarget.style.borderColor = '#2ecc71';
+    
+    selectedLaptop = {id, name, price, image};
+    
+    document.getElementById('laptop-summary').innerHTML = `
+        <img src="${image}" style="width: 100%; max-height: 150px; object-fit: contain; margin: 10px 0;">
+        <p style="color: #eef3ff;">${name}</p>
+    `;
+    document.getElementById('laptop-price').textContent = price.toLocaleString() + ' ₽';
+}
+
+function addLaptopBuild() {
+    if (!selectedLaptop) {
+        alert('❌ Выберите ноутбук!');
+        return;
+    }
+    
+    fetch(`/add_to_cart/${selectedLaptop.id}`)
+        .then(() => {
+            alert(`✅ ${selectedLaptop.name} добавлен в корзину!`);
+            window.location.href = '/cart';
+        });
+}
+</script>
+{% endblock %}
